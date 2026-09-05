@@ -1,0 +1,4 @@
+# Development-only tooling. The runtime lock stays in requirements.txt.
+-r requirements.txt
+
+ruff==0.15.4

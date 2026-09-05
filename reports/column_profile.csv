@@ -1,0 +1,170 @@
+table_name,column_name,data_type,row_count,null_count,null_percentage,distinct_count,minimum_value,maximum_value,sample_value
+erp_customers,erp_customer_id,string,23,0,0.0,23,,,10004521
+erp_customers,legal_name,string,23,0,0.0,23,,,Northstar Medical Supply LLC
+erp_customers,dba_name,string,23,0,0.0,23,,,Northstar Med
+erp_customers,parent_erp_customer_id,string,23,19,82.61,4,,,HOLDCO-EG
+erp_customers,industry,str,23,0,0.0,20,,,Healthcare
+erp_customers,customer_status,string,23,0,0.0,5,,,Active
+erp_customers,payment_terms,str,23,0,0.0,5,,,Net 30
+erp_customers,credit_limit_usd,float64,23,4,17.39,7,1.0,1000000.0,50000.0
+erp_customers,primary_bill_to_state,string,23,0,0.0,8,,,OH
+erp_customers,account_owner_email,string,23,2,8.7,21,,,northstar.med@example-corp.invalid
+erp_customers,created_date,str,23,0,0.0,23,2016-01-17 00:00:00,2024-01-01 00:00:00,2016-10-23
+erp_customers,last_modified_ts,str,23,0,0.0,18,2025-01-01 00:00:00,2025-11-22 00:00:00,2025-06-25 00:00:00
+erp_customers,source_system,string,23,0,0.0,1,,,ERP
+erp_customers,is_test_account,bool,23,0,0.0,2,False,True,False
+erp_customers,notes,str,23,14,60.87,4,,,HOLD - credit review
+erp_customers,annual_volume_tier,str,23,1,4.35,3,,,High
+customer_id_crosswalk,erp_customer_id,string,43,0,0.0,22,,,10004521
+customer_id_crosswalk,tms_customer_code,string,43,0,0.0,43,,,CUST001
+customer_id_crosswalk,is_primary_mapping,bool,43,0,0.0,2,False,True,True
+customer_id_crosswalk,effective_from,str,43,0,0.0,2,,,2019-01-01
+customer_id_crosswalk,effective_to,str,43,42,97.67,1,,,2024-03-01
+customer_id_crosswalk,mapping_confidence,str,43,0,0.0,3,,,High
+customer_id_crosswalk,notes,str,43,22,51.16,1,,,legacy alias / free-text import
+ref_warehouses,warehouse_id,string,5,0,0.0,5,,,WH01
+ref_warehouses,wms_location_code,string,5,0,0.0,5,,,CHI-JOL
+ref_warehouses,warehouse_name,string,5,0,0.0,5,,,Chicago Central
+ref_warehouses,city,str,5,0,0.0,5,,,Joliet
+ref_warehouses,state,str,5,0,0.0,5,,,IL
+ref_warehouses,postal_code,string,5,0,0.0,5,,,60435
+ref_warehouses,latitude,float64,5,0,0.0,5,32.7555,41.525,41.525
+ref_warehouses,longitude,float64,5,0,0.0,5,-117.6509,-74.4121,-88.0817
+ref_warehouses,timezone,str,5,0,0.0,3,,,America/Chicago
+ref_warehouses,daily_outbound_capacity,int64,5,0,0.0,5,1171,1281,1264
+ref_warehouses,is_active,bool,5,0,0.0,1,True,True,True
+ref_warehouses,source_system,string,5,0,0.0,1,,,WMS
+ref_carriers,carrier_id,string,16,0,0.0,16,,,CAR01
+ref_carriers,scac,string,16,0,0.0,16,,,SWLG
+ref_carriers,carrier_legal_name,string,16,0,0.0,16,,,SwiftLine Ground
+ref_carriers,mode,str,16,0,0.0,5,,,Parcel
+ref_carriers,status,str,16,0,0.0,2,,,Active
+ref_carriers,notes,str,16,15,93.75,1,,,Deactivated 2024-06
+ref_carriers,source_system,string,16,0,0.0,1,,,TMS
+tms_shipments,tms_shipment_id,string,100887,0,0.0,100887,,,TMS200001
+tms_shipments,tms_customer_code,string,100887,0,0.0,42,,,CUST002
+tms_shipments,erp_customer_id_ref,string,100887,2972,2.95,21,,,10004522
+tms_shipments,sales_order_id,string,100887,0,0.0,100000,,,SO700001
+tms_shipments,customer_po,string,100887,22124,21.93,52173,,,PO-49071
+tms_shipments,bol_number,string,100887,57508,57.0,41921,,,BOL816907
+tms_shipments,pro_number,string,100887,39250,38.9,61613,,,PRO62759119
+tms_shipments,tracking_number,string,100887,1232,1.22,98760,,,TRK6012407366
+tms_shipments,origin_warehouse_id,string,100887,0,0.0,5,,,WH05
+tms_shipments,origin_wms_code,string,100887,0,0.0,10,,,NJ-EDI
+tms_shipments,dest_name,string,100887,0,0.0,480,,,BluePeak - Miami
+tms_shipments,dest_address1,string,100887,4084,4.05,88713,,,7427 Tech Blvd
+tms_shipments,dest_city,str,100887,245,0.24,25,,,Miami
+tms_shipments,dest_state,string,100887,0,0.0,21,,,FL
+tms_shipments,dest_postal,string,100887,194,0.19,24,,,33101
+tms_shipments,dest_country,string,100887,0,0.0,3,,,US
+tms_shipments,is_residential,float64,100887,3135,3.11,2,0.0,1.0,0.0
+tms_shipments,carrier_id,string,100887,0,0.0,16,,,CAR02
+tms_shipments,carrier_scac,str,100887,5999,5.95,16,,,BLAL
+tms_shipments,mode,str,100887,0,0.0,5,,,LTL
+tms_shipments,service_level_code,string,100887,1998,1.98,5,,,EXP
+tms_shipments,service_level_name,string,100887,0,0.0,10,,,Expedited
+tms_shipments,planned_transit_days,float64,100887,3009,2.98,10,0.0,9.0,2.0
+tms_shipments,lane_miles_est,float64,100887,0,0.0,120,25.0,2560.3,1072.4
+tms_shipments,ship_create_date,str,100887,0,0.0,2056,2024-01-02 00:00:00,2025-12-15 00:00:00,2024-06-25
+tms_shipments,ship_create_ts,str,100887,0,0.0,97451,2024-01-02 06:00:25,2025-12-15 17:45:30,2024-06-25 09:05:52
+tms_shipments,promised_delivery_date,str,100887,3987,3.95,721,2024-01-03 00:00:00,2025-12-24 00:00:00,2024-06-27
+tms_shipments,actual_pickup_ts,str,100887,7282,7.22,92494,2024-01-02 08:00:57,2025-12-15 16:49:04,2024-06-25 11:12:33
+tms_shipments,actual_delivery_ts,str,100887,11436,11.34,89269,2024-01-02 13:47:17,2025-12-24 16:14:21,2024-06-27 09:01:50
+tms_shipments,shipment_status,string,100887,0,0.0,7,,,DELIVERED
+tms_shipments,exception_code,string,100887,92672,91.86,7,,,WEATHER
+tms_shipments,weight_lb,float64,100887,2034,2.02,30045,0.5,45000.0,447.6
+tms_shipments,pieces,int64,100887,0,0.0,30,1,30,8
+tms_shipments,freight_class,float64,100887,65850,65.27,10,50.0,125.0,55.0
+tms_shipments,estimated_revenue_usd,float64,100887,3073,3.05,69083,25.0,12784.06,951.08
+tms_shipments,estimated_cost_usd,float64,100887,3969,3.93,64886,20.0,10109.09,692.42
+tms_shipments,currency,str,100887,0,0.0,2,,,USD
+tms_shipments,on_time_flag,float64,100887,13738,13.62,2,0.0,1.0,1.0
+tms_shipments,is_void,bool,100887,0,0.0,2,False,True,False
+tms_shipments,is_re_tender,bool,100887,0,0.0,2,False,True,False
+tms_shipments,parent_tms_shipment_id,string,100887,100000,99.12,887,,,TMS200113
+tms_shipments,source_system,string,100887,0,0.0,1,,,TMS
+tms_shipments,extract_batch_id,string,100887,0,0.0,715,,,TMS_DAILY_20240625
+tms_shipments,last_update_ts,str,100887,0,0.0,99890,2024-01-02 16:47:17,2025-12-25 03:14:21,2024-06-27 12:01:50
+tms_shipments,row_hash,string,100887,0,0.0,100000,,,h66601319807
+tms_shipment_lines,tms_shipment_id,string,275300,0,0.0,100000,,,TMS200001
+tms_shipment_lines,line_number,string,275300,0,0.0,8,,,1
+tms_shipment_lines,sku,string,275300,0,0.0,18,,,SKU-6100
+tms_shipment_lines,description,str,275300,4125,1.5,19,,,Furniture Component
+tms_shipment_lines,qty_ordered,int64,275300,0,0.0,60,1,60,3
+tms_shipment_lines,qty_shipped,float64,275300,5565,2.02,63,0.0,62.0,3.0
+tms_shipment_lines,unit_weight_lb,float64,275300,0,0.0,41001,0.2,23985.27,38.54
+tms_shipment_lines,hazardous_flag,bool,275300,0,0.0,2,False,True,False
+tms_shipment_lines,source_system,string,275300,0,0.0,1,,,TMS
+carrier_tracking_events,column1,string,360878,0,0.0,360878,,,EVT1
+carrier_tracking_events,tms_shipment_id,string,360878,0,0.0,92059,,,TMS200001
+carrier_tracking_events,tracking_number,string,360878,0,0.0,92054,,,TRK6012407366
+carrier_tracking_events,event_code,string,360878,0,0.0,5,,,BOOKED
+carrier_tracking_events,event_description,string,360878,0,0.0,5,,,Shipment booked
+carrier_tracking_events,event_ts_utc,str,360878,0,0.0,356792,,,2024-06-25 11:52:52
+carrier_tracking_events,event_ts_local,str,360878,0,0.0,356754,,,2024-06-25 06:52:52
+carrier_tracking_events,event_city,str,360878,14348,3.98,29,,,Edison
+carrier_tracking_events,event_state,string,360878,0,0.0,21,,,NJ
+carrier_tracking_events,exception_reason,string,360878,355081,98.39,7,,,WEATHER
+carrier_tracking_events,source,string,360878,0,0.0,3,,,Manual
+carrier_tracking_events,ingested_ts,str,360878,0,0.0,358921,2024-01-02 06:16:49,2025-12-24 16:41:21,2024-06-25 07:01:52
+wms_outbound,wms_outbound_id,string,92814,0,0.0,92814,,,WMS700001
+wms_outbound,wms_location_code,string,92814,0,0.0,5,,,NJ-EDI
+wms_outbound,sales_order_id,string,92814,0,0.0,92814,,,SO700001
+wms_outbound,tms_shipment_id,string,92814,6473,6.97,86341,,,TMS200001
+wms_outbound,pick_start_ts,str,92814,0,0.0,92696,2024-01-01 15:42:08,2025-12-15 12:50:11,2024-06-24 23:28:36
+wms_outbound,pack_complete_ts,str,92814,0,0.0,92673,2024-01-01 16:40:01,2025-12-15 16:07:49,2024-06-25 04:32:53
+wms_outbound,ship_confirm_ts,str,92814,4471,4.82,86340,2024-01-02 06:00:25,2025-12-15 17:45:30,2024-06-25 09:05:52
+wms_outbound,lines_picked,int64,92814,0,0.0,8,1,8,6
+wms_outbound,short_pick_flag,bool,92814,0,0.0,2,False,True,False
+wms_outbound,inventory_accuracy_snapshot,float64,92814,0,0.0,231,0.975,0.998,0.9902
+wms_outbound,source_system,string,92814,0,0.0,1,,,WMS
+erp_invoices,invoice_id,string,80893,0,0.0,80893,,,INV900001
+erp_invoices,invoice_type,string,80893,0,0.0,2,,,CARRIER_BILL
+erp_invoices,erp_customer_id,string,80893,0,0.0,21,,,10004522
+erp_invoices,tms_shipment_id,string,80893,6477,8.01,74415,,,TMS200001
+erp_invoices,sales_order_id,string,80893,4888,6.04,76005,,,SO700001
+erp_invoices,pro_number,string,80893,41446,51.24,39435,,,PRO61346398
+erp_invoices,invoice_date,str,80893,0,0.0,739,2024-01-05 00:00:00,2026-01-13 00:00:00,2024-07-16
+erp_invoices,gl_post_date,str,80893,0,0.0,741,2024-01-06 00:00:00,2026-01-15 00:00:00,2024-07-16
+erp_invoices,line_amount_usd,float64,80893,0,0.0,60815,19.01,12395.85,664.49
+erp_invoices,accessorial_amount_usd,float64,80893,0,0.0,8745,0.0,133.96,0.0
+erp_invoices,fuel_surcharge_usd,float64,80893,0,0.0,15453,0.0,1079.89,70.71
+erp_invoices,tax_usd,int64,80893,0,0.0,1,0,0,0
+erp_invoices,currency,str,80893,0,0.0,1,,,USD
+erp_invoices,payment_status,string,80893,0,0.0,4,,,Paid
+erp_invoices,dispute_flag,bool,80893,0,0.0,2,False,True,False
+erp_invoices,source_system,string,80893,0,0.0,1,,,ERP
+claims,claim_id,string,1652,0,0.0,1652,,,CLM801
+claims,tms_shipment_id,string,1652,0,0.0,1652,,,TMS200038
+claims,pro_number,string,1652,632,38.26,1020,,,PRO51355038
+claims,claim_type,string,1652,0,0.0,4,,,Loss
+claims,filed_date,str,1652,0,0.0,647,2024-01-08 00:00:00,2026-01-08 00:00:00,2024-02-24
+claims,claim_amount_requested_usd,float64,1652,0,0.0,1600,75.0,7936.07,539.39
+claims,claim_amount_paid_usd,float64,1652,706,42.74,743,0.0,7530.23,940.67
+claims,claim_status,string,1652,0,0.0,5,,,Open
+claims,carrier_id,string,1652,0,0.0,16,,,CAR12
+claims,source_system,string,1652,0,0.0,1,,,Claims
+claims,adjuster_notes,string,1652,308,18.64,5,,,OS&D inspection complete
+crm_tickets,ticket_id,string,4714,0,0.0,4714,,,TKT-5001
+crm_tickets,opened_ts,str,4714,0,0.0,4115,2024-01-04 12:00:00,2025-12-23 03:00:00,2024-03-16 02:00:00
+crm_tickets,erp_customer_id,string,4714,490,10.39,21,,,10004526
+crm_tickets,tms_customer_code,string,4714,0,0.0,41,,,CUST006
+crm_tickets,tms_shipment_id,string,4714,559,11.86,4155,,,TMS200007
+crm_tickets,tracking_number,string,4714,1197,25.39,3517,,,PRO60181809
+crm_tickets,channel,string,4714,0,0.0,4,,,Phone
+crm_tickets,category_raw,str,4714,0,0.0,24,,,Lost Shipment
+crm_tickets,severity,string,4714,0,0.0,4,,,Low
+crm_tickets,status,str,4714,0,0.0,5,,,Resolved
+crm_tickets,subject,str,4714,0,0.0,8,,,Delivery exception
+crm_tickets,description_free_text,str,4714,0,0.0,8,,,Exception on tracking. Need update.
+crm_tickets,resolution_hours,float64,4714,1037,22.0,921,2.0,96.0,87.3
+crm_tickets,source_system,string,4714,0,0.0,1,,,CRM
+csat_survey_responses,response_id,string,3952,0,0.0,3952,,,CSAT61045279
+csat_survey_responses,survey_sent_ts,str,3952,0,0.0,710,2024-01-04 00:00:00,2025-12-23 00:00:00,2024-01-13 00:00:00
+csat_survey_responses,response_ts,str,3952,0,0.0,722,2024-01-06 00:00:00,2025-12-30 00:00:00,2024-01-20 00:00:00
+csat_survey_responses,erp_customer_id,string,3952,0,0.0,21,,,10004524
+csat_survey_responses,tms_shipment_id,string,3952,625,15.81,3327,,,TMS200050
+csat_survey_responses,csat_score_1_to_5,int64,3952,0,0.0,5,1,5,4
+csat_survey_responses,nps_score_0_to_10,int64,3952,0,0.0,10,1,10,9
+csat_survey_responses,comment,str,3952,1751,44.31,5,,,Great service
+csat_survey_responses,source_system,string,3952,0,0.0,1,,,Medallia_Export

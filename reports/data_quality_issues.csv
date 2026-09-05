@@ -1,0 +1,45 @@
+table_name,check_name,status,issue_count,severity,description
+erp_customers,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+erp_customers,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+customer_id_crosswalk,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+customer_id_crosswalk,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+ref_warehouses,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+ref_warehouses,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+ref_carriers,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+ref_carriers,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+tms_shipments,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+tms_shipments,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+tms_shipment_lines,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+tms_shipment_lines,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+carrier_tracking_events,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+carrier_tracking_events,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+wms_outbound,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+wms_outbound,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+erp_invoices,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+erp_invoices,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+claims,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+claims,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+crm_tickets,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+crm_tickets,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+csat_survey_responses,Null primary keys,Pass,0,High,Primary-key fields should not be null.
+csat_survey_responses,Duplicate primary keys,Pass,0,High,Primary-key values should be unique.
+tms_shipments,Unmatched TMS customer codes,Issue,183,High,TMS customer codes should match the customer crosswalk.
+tms_shipments,Unmatched ERP customer references,Pass,0,High,ERP customer references should match ERP_Customers.
+tms_shipments,Unmatched carriers,Pass,0,High,Shipment carrier IDs should match Ref_Carriers.
+tms_shipments,Unmatched warehouses,Pass,0,High,Origin warehouse IDs should match Ref_Warehouses.
+tms_shipments,Delivery before pickup,Pass,0,High,Actual delivery cannot occur before actual pickup.
+tms_shipments,Delivered shipments missing delivery date,Issue,4542,High,Delivered shipments should normally have an actual delivery timestamp.
+tms_shipment_lines,Unmatched tms_shipment_id,Pass,0,Medium,Non-null shipment IDs should match TMS_Shipments.
+carrier_tracking_events,Unmatched tms_shipment_id,Pass,0,Medium,Non-null shipment IDs should match TMS_Shipments.
+claims,Unmatched tms_shipment_id,Pass,0,Medium,Non-null shipment IDs should match TMS_Shipments.
+crm_tickets,Unmatched tms_shipment_id,Pass,0,Medium,Non-null shipment IDs should match TMS_Shipments.
+csat_survey_responses,Unmatched tms_shipment_id,Pass,0,Medium,Non-null shipment IDs should match TMS_Shipments.
+wms_outbound,Missing TMS shipment ID,Issue,6473,Medium,Use sales_order_id as the controlled fallback match.
+erp_invoices,Missing TMS shipment ID,Issue,6477,Medium,Use sales order and PRO number as controlled fallbacks.
+tms_shipment_lines,Missing shipped quantity,Issue,5565,Medium,"Missing shipped quantity should remain null, not zero."
+tms_shipment_lines,Negative quantity,Pass,0,High,Ordered and shipped quantities cannot be negative.
+tms_shipment_lines,Shipped quantity above ordered quantity,Issue,5340,Low,Overshipments are possible but should be reviewed.
+carrier_tracking_events,Duplicate delivery events,Issue,2218,Medium,Keep the event with the latest ingestion timestamp.
+claims,Paid claim above requested amount,Pass,0,High,Paid claim amount should not exceed requested amount.
+csat_survey_responses,Invalid CSAT score,Pass,0,High,CSAT must be between 1 and 5.
+csat_survey_responses,Invalid NPS score,Pass,0,High,NPS responses must be between 0 and 10.

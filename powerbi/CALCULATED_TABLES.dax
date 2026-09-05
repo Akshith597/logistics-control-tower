@@ -1,0 +1,25 @@
+-- Create each definition as a separate calculated table.
+
+_Measures =
+ROW("Placeholder", BLANK())
+
+-- Illustrative portfolio targets only. Replace with management-approved
+-- service-level and financial targets before operational use.
+
+KPI Targets =
+DATATABLE(
+    "kpi_name", STRING,
+    "target_value", DOUBLE,
+    "warning_tolerance", DOUBLE,
+    "direction", STRING,
+    {
+        { "On-Time Delivery %", 0.95, 0.02, "Higher" },
+        { "OTIF %", 0.93, 0.02, "Higher" },
+        { "Average Fill Rate", 0.98, 0.01, "Higher" },
+        { "Gross Margin %", 0.20, 0.03, "Higher" },
+        { "Claim Rate", 0.02, 0.01, "Lower" },
+        { "Complaint Rate", 0.04, 0.01, "Lower" },
+        { "Average CSAT", 4.30, 0.30, "Higher" },
+        { "Net Promoter Score", 50.00, 10.00, "Higher" }
+    }
+)

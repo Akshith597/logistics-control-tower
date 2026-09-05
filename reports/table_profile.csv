@@ -1,0 +1,13 @@
+table_name,row_count,column_count,fully_duplicated_rows,duplicate_key_groups,file_bytes
+erp_customers,23,16,0,0,12337
+customer_id_crosswalk,43,7,0,0,5194
+ref_warehouses,5,12,0,0,7648
+ref_carriers,16,7,0,0,4956
+tms_shipments,100887,45,0,0,13090648
+tms_shipment_lines,275300,9,0,0,2490693
+carrier_tracking_events,360878,12,0,0,15389766
+wms_outbound,92814,11,0,0,4892248
+erp_invoices,80893,16,0,0,3113757
+claims,1652,11,0,0,61828
+crm_tickets,4714,14,0,0,174121
+csat_survey_responses,3952,9,0,0,91646

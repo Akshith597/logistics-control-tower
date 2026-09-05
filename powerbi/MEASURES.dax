@@ -1,0 +1,453 @@
+-- Logistics Control Tower measure catalog
+-- Create each definition as a separate measure on the _Measures table.
+-- Suggested display folders are shown as section comments.
+
+-- 01 Volume --------------------------------------------------
+
+Total Shipments =
+COUNTROWS('Fact Shipment')
+
+Official KPI Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE()
+)
+
+Shipment Lines =
+SUM('Fact Shipment'[shipment_line_count])
+
+Quantity Ordered =
+SUM('Fact Shipment'[total_quantity_ordered])
+
+Quantity Shipped =
+SUM('Fact Shipment'[total_quantity_shipped])
+
+Delivered Shipments (Actual Date) =
+CALCULATE(
+    [Total Shipments],
+    USERELATIONSHIP(
+        'Dim Date'[date_key],
+        'Fact Shipment'[actual_delivery_date]
+    ),
+    NOT ISBLANK('Fact Shipment'[actual_delivery_date])
+)
+
+Promised Shipments (Promised Date) =
+CALCULATE(
+    [Total Shipments],
+    USERELATIONSHIP(
+        'Dim Date'[date_key],
+        'Fact Shipment'[promised_delivery_date]
+    ),
+    NOT ISBLANK('Fact Shipment'[promised_delivery_date])
+)
+
+-- 02 Service -------------------------------------------------
+
+OTD Eligible Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    NOT ISBLANK('Fact Shipment'[final_on_time_flag])
+)
+
+On-Time Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    'Fact Shipment'[final_on_time_flag] = TRUE()
+)
+
+Late Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    NOT ISBLANK('Fact Shipment'[final_on_time_flag]),
+    'Fact Shipment'[final_on_time_flag] == FALSE()
+)
+
+On-Time Delivery % =
+DIVIDE([On-Time Shipments], [OTD Eligible Shipments])
+
+OTIF Eligible Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    NOT ISBLANK('Fact Shipment'[otif_flag])
+)
+
+OTIF Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    'Fact Shipment'[otif_flag] = TRUE()
+)
+
+OTIF % =
+DIVIDE([OTIF Shipments], [OTIF Eligible Shipments])
+
+Average Fill Rate =
+CALCULATE(
+    AVERAGE('Fact Shipment'[shipment_fill_rate]),
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE()
+)
+
+Full-Fill Eligible Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    NOT ISBLANK('Fact Shipment'[shipment_fill_rate])
+)
+
+Full-Fill Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    'Fact Shipment'[shipment_fill_rate] >= 1,
+    NOT ISBLANK('Fact Shipment'[shipment_fill_rate])
+)
+
+Full-Fill Rate =
+DIVIDE([Full-Fill Shipments], [Full-Fill Eligible Shipments])
+
+Fill Rate Coverage % =
+DIVIDE(
+    CALCULATE(
+        [Total Shipments],
+        'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+        NOT ISBLANK('Fact Shipment'[shipment_fill_rate])
+    ),
+    [Official KPI Shipments]
+)
+
+Average Days Late =
+CALCULATE(
+    AVERAGE('Fact Shipment'[days_late]),
+    'Fact Shipment'[official_kpi_eligible_flag] = TRUE(),
+    NOT ISBLANK('Fact Shipment'[final_on_time_flag]),
+    'Fact Shipment'[final_on_time_flag] == FALSE()
+)
+
+Tracking Exceptions =
+SUM('Fact Shipment'[tracking_exception_count])
+
+Tracking Exceptions per Shipment =
+DIVIDE([Tracking Exceptions], [Total Shipments])
+
+-- 03 Warehouse -----------------------------------------------
+
+Average Warehouse Cycle Hours =
+AVERAGE('Fact Shipment'[warehouse_cycle_hours])
+
+Average Pick-to-Pack Hours =
+AVERAGE('Fact Shipment'[pick_to_pack_hours])
+
+Average Pack-to-Ship Hours =
+AVERAGE('Fact Shipment'[pack_to_ship_hours])
+
+WMS Matched Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[wms_record_count] > 0
+)
+
+WMS Match Rate =
+DIVIDE([WMS Matched Shipments], [Total Shipments])
+
+Short Pick Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[wms_record_count] > 0,
+    'Fact Shipment'[short_pick_flag] = TRUE()
+)
+
+Short Pick Eligible Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[wms_record_count] > 0,
+    NOT ISBLANK('Fact Shipment'[short_pick_flag])
+)
+
+Short Pick Rate =
+DIVIDE([Short Pick Shipments], [Short Pick Eligible Shipments])
+
+Average Inventory Accuracy =
+AVERAGE('Fact Shipment'[average_inventory_accuracy])
+
+-- 04 Financial -----------------------------------------------
+
+Customer Revenue =
+SUM('Fact Shipment'[customer_revenue_usd])
+
+Carrier Cost =
+SUM('Fact Shipment'[carrier_cost_usd])
+
+Accessorial Cost =
+SUM('Fact Shipment'[total_accessorial_usd])
+
+Fuel Surcharge =
+SUM('Fact Shipment'[total_fuel_surcharge_usd])
+
+Claims Paid =
+SUM('Fact Shipment'[claims_paid_usd])
+
+Gross Margin =
+SUM('Fact Shipment'[gross_margin_usd])
+
+Gross Margin % =
+DIVIDE([Gross Margin], [Customer Revenue])
+
+Revenue per Shipment =
+DIVIDE([Customer Revenue], [Total Shipments])
+
+Carrier Cost per Shipment =
+DIVIDE([Carrier Cost], [Total Shipments])
+
+Margin per Shipment =
+DIVIDE([Gross Margin], [Total Shipments])
+
+Accessorial Cost % =
+DIVIDE([Accessorial Cost], [Carrier Cost])
+
+Invoice Matched Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[invoice_count] > 0
+)
+
+Invoice Match Rate =
+DIVIDE([Invoice Matched Shipments], [Total Shipments])
+
+-- 05 Claims and Customer Experience --------------------------
+
+Claim Count =
+SUM('Fact Shipment'[claim_count])
+
+Shipments with Claims =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[claim_flag] = TRUE()
+)
+
+Claim Rate =
+DIVIDE([Shipments with Claims], [Total Shipments])
+
+Claims Paid per Shipment =
+DIVIDE([Claims Paid], [Total Shipments])
+
+Complaint Tickets =
+SUM('Fact Shipment'[ticket_count])
+
+Shipments with Complaints =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[complaint_flag] = TRUE()
+)
+
+Complaint Rate =
+DIVIDE([Shipments with Complaints], [Total Shipments])
+
+Complaints per 1,000 Shipments =
+DIVIDE([Complaint Tickets] * 1000, [Total Shipments])
+
+Severe Tickets =
+SUM('Fact Shipment'[severe_ticket_count])
+
+Average Resolution Hours =
+AVERAGE('Fact Shipment'[average_resolution_hours])
+
+Surveyed Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[survey_response_count] > 0
+)
+
+Survey Response Coverage % =
+DIVIDE([Surveyed Shipments], [Total Shipments])
+
+Average CSAT =
+VAR EligibleResponses =
+    FILTER(
+        'Fact Shipment',
+        'Fact Shipment'[valid_csat_response_count] > 0
+            && NOT ISBLANK('Fact Shipment'[average_csat_score])
+    )
+RETURN
+DIVIDE(
+    SUMX(
+        EligibleResponses,
+        'Fact Shipment'[average_csat_score]
+            * 'Fact Shipment'[valid_csat_response_count]
+    ),
+    SUMX(
+        EligibleResponses,
+        'Fact Shipment'[valid_csat_response_count]
+    )
+)
+
+Promoters =
+SUM('Fact Shipment'[promoter_count])
+
+Passives =
+SUM('Fact Shipment'[passive_count])
+
+Detractors =
+SUM('Fact Shipment'[detractor_count])
+
+NPS Responses =
+[Promoters] + [Passives] + [Detractors]
+
+Net Promoter Score =
+100 * DIVIDE(
+    [Promoters] - [Detractors],
+    [NPS Responses]
+)
+
+-- 06 Data Quality --------------------------------------------
+
+Matched Customer Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[customer_key] <> "UNKNOWN"
+)
+
+Customer Match Rate =
+DIVIDE([Matched Customer Shipments], [Total Shipments])
+
+Matched Carrier Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[carrier_key] <> "UNKNOWN"
+)
+
+Carrier Match Rate =
+DIVIDE([Matched Carrier Shipments], [Total Shipments])
+
+Matched Warehouse Shipments =
+CALCULATE(
+    [Total Shipments],
+    'Fact Shipment'[warehouse_key] <> "UNKNOWN"
+)
+
+Warehouse Match Rate =
+DIVIDE([Matched Warehouse Shipments], [Total Shipments])
+
+-- 07 Time Intelligence ---------------------------------------
+
+Shipments Previous Month =
+CALCULATE(
+    [Total Shipments],
+    DATEADD('Dim Date'[date_key], -1, MONTH)
+)
+
+Shipment Change % vs Previous Month =
+DIVIDE(
+    [Total Shipments] - [Shipments Previous Month],
+    [Shipments Previous Month]
+)
+
+On-Time Delivery % Previous Month =
+CALCULATE(
+    [On-Time Delivery %],
+    DATEADD('Dim Date'[date_key], -1, MONTH)
+)
+
+OTD Change vs Previous Month (pp) =
+100 * (
+    [On-Time Delivery %]
+        - [On-Time Delivery % Previous Month]
+)
+
+Gross Margin Previous Month =
+CALCULATE(
+    [Gross Margin],
+    DATEADD('Dim Date'[date_key], -1, MONTH)
+)
+
+Gross Margin Change % vs Previous Month =
+DIVIDE(
+    [Gross Margin] - [Gross Margin Previous Month],
+    [Gross Margin Previous Month]
+)
+
+-- 08 Targets and Conditional Formatting ----------------------
+
+On-Time Delivery Target =
+CALCULATE(
+    MAX('KPI Targets'[target_value]),
+    'KPI Targets'[kpi_name] = "On-Time Delivery %"
+)
+
+On-Time Delivery Warning Tolerance =
+CALCULATE(
+    MAX('KPI Targets'[warning_tolerance]),
+    'KPI Targets'[kpi_name] = "On-Time Delivery %"
+)
+
+OTD Variance to Target (pp) =
+100 * (
+    [On-Time Delivery %]
+        - [On-Time Delivery Target]
+)
+
+OTD Status =
+VAR Actual = [On-Time Delivery %]
+VAR Target = [On-Time Delivery Target]
+VAR Tolerance = [On-Time Delivery Warning Tolerance]
+RETURN
+    SWITCH(
+        TRUE(),
+        ISBLANK(Actual), "No data",
+        Actual >= Target, "On target",
+        Actual >= Target - Tolerance, "Watch",
+        "Off target"
+    )
+
+OTD Status Color =
+SWITCH(
+    [OTD Status],
+    "On target", "#16A34A",
+    "Watch", "#D97706",
+    "Off target", "#DC2626",
+    "#94A3B8"
+)
+
+Gross Margin Target =
+CALCULATE(
+    MAX('KPI Targets'[target_value]),
+    'KPI Targets'[kpi_name] = "Gross Margin %"
+)
+
+Gross Margin Warning Tolerance =
+CALCULATE(
+    MAX('KPI Targets'[warning_tolerance]),
+    'KPI Targets'[kpi_name] = "Gross Margin %"
+)
+
+Gross Margin Status =
+VAR Actual = [Gross Margin %]
+VAR Target = [Gross Margin Target]
+VAR Tolerance = [Gross Margin Warning Tolerance]
+RETURN
+    SWITCH(
+        TRUE(),
+        ISBLANK(Actual), "No data",
+        Actual >= Target, "On target",
+        Actual >= Target - Tolerance, "Watch",
+        "Off target"
+    )
+
+Gross Margin Status Color =
+SWITCH(
+    [Gross Margin Status],
+    "On target", "#16A34A",
+    "Watch", "#D97706",
+    "Off target", "#DC2626",
+    "#94A3B8"
+)
+
+Data Through Date =
+CALCULATE(
+    MAX('Fact Shipment'[ship_date]),
+    REMOVEFILTERS('Dim Date')
+)

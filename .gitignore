@@ -1,0 +1,32 @@
+# Raw and processed datasets
+data/raw/*.xlsx
+data/raw/*.xls
+data/processed/*.csv
+data/processed/*.parquet
+
+# Power BI model exports. These are rebuilt by pipeline step 10
+# (python/10_export_powerbi_parquet.py) and are deliberately not tracked, to
+# keep the repository free of large regenerable binaries.
+data/powerbi/*.parquet
+
+# Authored Power BI report. Binary, produced by Power BI Desktop rather than by
+# this repository, and rebuilt by hand from powerbi/BUILD_GUIDE.md.
+*.pbix
+
+# Rebuilt local analytical database
+database/*.duckdb
+database/*.wal
+
+# Credentials and local configuration
+.env
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+
+# Power BI temporary files
+*.pbit.tmp
+*.pbix.tmp

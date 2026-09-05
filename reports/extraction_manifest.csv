@@ -1,0 +1,13 @@
+sheet_name,status,rows,columns,output_file,output_bytes
+ERP_Customers,Success,23,16,erp_customers.parquet,12337
+Customer_ID_Crosswalk,Success,43,7,customer_id_crosswalk.parquet,5194
+Ref_Warehouses,Success,5,12,ref_warehouses.parquet,7648
+Ref_Carriers,Success,16,7,ref_carriers.parquet,4956
+TMS_Shipments,Success,100887,45,tms_shipments.parquet,13090648
+TMS_Shipment_Lines,Success,275300,9,tms_shipment_lines.parquet,2490693
+Carrier_Tracking_Events,Success,360878,12,carrier_tracking_events.parquet,15389766
+WMS_Outbound,Success,92814,11,wms_outbound.parquet,4892248
+ERP_Invoices,Success,80893,16,erp_invoices.parquet,3113757
+Claims,Success,1652,11,claims.parquet,61828
+CRM_Tickets,Success,4714,14,crm_tickets.parquet,174121
+CSAT_Survey_Responses,Success,3952,9,csat_survey_responses.parquet,91646

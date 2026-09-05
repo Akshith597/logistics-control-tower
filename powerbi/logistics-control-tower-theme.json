@@ -1,0 +1,44 @@
+{
+  "name": "Logistics Control Tower",
+  "dataColors": [
+    "#2563EB",
+    "#0F766E",
+    "#7C3AED",
+    "#D97706",
+    "#DC2626",
+    "#0891B2",
+    "#65A30D",
+    "#64748B"
+  ],
+  "background": "#F8FAFC",
+  "foreground": "#172033",
+  "tableAccent": "#2563EB",
+  "good": "#16A34A",
+  "neutral": "#D97706",
+  "bad": "#DC2626",
+  "maximum": "#1D4ED8",
+  "center": "#F59E0B",
+  "minimum": "#DBEAFE",
+  "textClasses": {
+    "callout": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 30,
+      "color": "#172033"
+    },
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 14,
+      "color": "#172033"
+    },
+    "header": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 11,
+      "color": "#172033"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10,
+      "color": "#475569"
+    }
+  }
+}

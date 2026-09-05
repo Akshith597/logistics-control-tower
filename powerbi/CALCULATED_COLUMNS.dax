@@ -1,0 +1,20 @@
+-- Create these as calculated columns on Dim Date.
+-- Then set year_month to sort by year_month_sort.
+
+year_month_sort =
+'Dim Date'[year] * 100 + 'Dim Date'[month_number]
+
+quarter_label =
+"Q" & FORMAT('Dim Date'[quarter], "0")
+
+year_quarter =
+FORMAT('Dim Date'[year], "0") & " Q" & FORMAT('Dim Date'[quarter], "0")
+
+-- Optional user-friendly lane label on Dim Lane.
+
+lane_label =
+'Dim Lane'[origin_warehouse_id]
+    & " → "
+    & 'Dim Lane'[destination_city]
+    & ", "
+    & 'Dim Lane'[destination_state]

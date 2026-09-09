@@ -97,7 +97,9 @@ See the full [semantic model specification](powerbi/MODEL_SPEC.md).
 | [`powerbi/logistics-control-tower-theme.json`](powerbi/logistics-control-tower-theme.json) | Importable Power BI theme |
 | [`documentation/data_dictionary.xlsx`](documentation/data_dictionary.xlsx) | Source data dictionary |
 | [`documentation/POWER_BI_VALIDATION.md`](documentation/POWER_BI_VALIDATION.md) | Model, KPI, interaction, accessibility, and performance QA |
+| [`documentation/POWER_BI_QA_RESULTS.md`](documentation/POWER_BI_QA_RESULTS.md) | Completed manual interaction, performance, accessibility, and release review |
 | [`images/Logistics_Control_Tower.pdf`](images/Logistics_Control_Tower.pdf) | Reviewer-friendly export of the authored seven-page report |
+| `images/*.png` | Readable report-page and semantic-model evidence captures |
 | [`reports/`](reports/) | Profiling results, data-quality issues, ranked opportunities, and findings |
 | [`tests/`](tests/) | Python unit tests, SQL fixture tests over the real queries, and the end-to-end integration test |
 
@@ -211,8 +213,9 @@ deterministically by the pipeline.
 - A seven-page PDF export is available at [`images/Logistics_Control_Tower.pdf`](images/Logistics_Control_Tower.pdf) for reviewers who do not have Power BI Desktop.
 - Readable page evidence is available in [`images/Executive_Overview.png`](images/Executive_Overview.png), [`images/Carrier_Lane_Performance.png`](images/Carrier_Lane_Performance.png), [`images/Profitability.png`](images/Profitability.png), and [`images/Data_Quality_Coverage.png`](images/Data_Quality_Coverage.png). The semantic-model evidence is [`images/Model_View.png`](images/Model_View.png).
 - The completed manual review is recorded in [`documentation/POWER_BI_QA_RESULTS.md`](documentation/POWER_BI_QA_RESULTS.md), including the interaction evidence, Performance Analyzer timings, and the explicit accessibility finding.
+- The reviewed PBIX is available as the [v1.0.0 GitHub release asset](https://github.com/Akshith597/logistics-control-tower/releases/tag/v1.0.0); it remains out of the source tree because `.pbix` is intentionally ignored.
 - The automated gate is [`portfolio-quality.yml`](.github/workflows/portfolio-quality.yml): run `python -m unittest discover -s tests -v` and `python -m ruff check .` locally before publishing.
-- The reviewed PBIX remains local at `powerbi/Logistics_Control_Tower.pbix` because `.pbix` is intentionally ignored. Attach that reviewed binary or publish it as a release asset when the GitHub remote is available.
+- The repository is published for portfolio review. The release notes disclose the synthetic-data scope and the QA evidence; the accessibility limitation is documented rather than hidden.
 
 ## KPI governance and data quality
 

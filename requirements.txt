@@ -1,4 +1,4 @@
-# Reproducible runtime lock; validated with CPython 3.13.
+# Reproducible runtime lock; validated with CPython 3.11, 3.12, and 3.13 in CI.
 # Direct and transitive dependencies are pinned intentionally.
 duckdb==1.5.5
 et_xmlfile==2.0.0

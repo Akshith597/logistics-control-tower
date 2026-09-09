@@ -75,6 +75,16 @@ the fact with single-direction one-to-many relationships.
 
 See the full [semantic model specification](powerbi/MODEL_SPEC.md).
 
+## Production boundary
+
+This portfolio version intentionally runs as a transparent local full-refresh:
+an ordered Python runner invokes each SQL/data-contract step, DuckDB provides
+the local warehouse, and CI rebuilds the deterministic demo fixture. That makes
+the engineering decisions easy to inspect without pretending this repository is
+already a deployed production platform. The concrete next steps for scheduling,
+incremental/CDC processing, dbt lineage, and operational observability are
+listed in the [production roadmap](documentation/PRODUCTION_ROADMAP.md).
+
 ## Business questions
 
 1. Which carriers, warehouses, modes, and lanes have the weakest service?
@@ -96,6 +106,7 @@ See the full [semantic model specification](powerbi/MODEL_SPEC.md).
 | [`powerbi/REPORT_BLUEPRINT.md`](powerbi/REPORT_BLUEPRINT.md) | Seven-page report design and interaction plan |
 | [`powerbi/logistics-control-tower-theme.json`](powerbi/logistics-control-tower-theme.json) | Importable Power BI theme |
 | [`documentation/data_dictionary.xlsx`](documentation/data_dictionary.xlsx) | Source data dictionary |
+| [`documentation/PRODUCTION_ROADMAP.md`](documentation/PRODUCTION_ROADMAP.md) | Explicit path from local case study to scheduled, incremental production platform |
 | [`documentation/POWER_BI_VALIDATION.md`](documentation/POWER_BI_VALIDATION.md) | Model, KPI, interaction, accessibility, and performance QA |
 | [`documentation/POWER_BI_QA_RESULTS.md`](documentation/POWER_BI_QA_RESULTS.md) | Completed manual interaction, performance, accessibility, and release review |
 | [`images/Logistics_Control_Tower.pdf`](images/Logistics_Control_Tower.pdf) | Reviewer-friendly export of the authored seven-page report |

@@ -2,12 +2,12 @@
 name = "logistics-control-tower"
 version = "1.0.0"
 description = "End-to-end logistics analytics case study: DuckDB star schema, reproducible Python pipeline, and a Power BI semantic-model kit."
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 readme = "README.md"
 
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py311"
 extend-exclude = [".venv", "data", "database", "reports"]
 
 [tool.ruff.lint]

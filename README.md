@@ -143,6 +143,13 @@ contains 7,200 source shipments and will produce different KPI values from the
 `--force-demo-data` only when you intentionally want to replace the existing
 isolated demo workbook.
 
+The demo survey fixture uses seeded shipment-level hashes for response selection,
+CSAT, NPS, and comments; those values are not functions of delivery delay. This
+keeps the fixture useful for testing analytical logic without encoding a desired
+customer-satisfaction finding into the input data. Any relationship observed in
+the demo is therefore a sample result, while the headline findings require the
+separate full-size benchmark workbook described in [`reports/README.md`](reports/README.md).
+
 For targeted development, select an inclusive range of steps:
 
 ```powershell

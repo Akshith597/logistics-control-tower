@@ -1,4 +1,10 @@
-"""Generate a deterministic, relationship-complete demo logistics workbook."""
+"""Generate a deterministic, relationship-complete demo logistics workbook.
+
+The fixture is designed to exercise joins, quality checks, and KPI logic. Survey
+selection and satisfaction scores are seeded from shipment identifiers rather
+than derived from delivery delay, so the analysis layer cannot manufacture a
+delivery-to-CSAT finding by construction.
+"""
 
 import argparse
 from datetime import date, datetime, timedelta
@@ -205,6 +211,13 @@ def build_demo_tables(shipment_count=DEFAULT_SHIPMENTS, seed=DEFAULT_SEED):
     claim_rows = []
     ticket_rows = []
     survey_rows = []
+    survey_comments = (
+        "Delivery arrived as expected.",
+        "Tracking updates were clear.",
+        "Packaging was in good condition.",
+        "The service was acceptable.",
+        "Communication could be improved.",
+    )
     event_number = 1
     invoice_number = 1
 
@@ -459,9 +472,25 @@ def build_demo_tables(shipment_count=DEFAULT_SHIPMENTS, seed=DEFAULT_SEED):
                 "source_system": "CRM",
             })
 
-        if delivered and index % 7 == 0:
-            csat = 2 if delay_days > 0 else 5
-            nps = 4 if delay_days > 0 else 9
+        survey_hash = int(
+            stable_hash(seed, f"survey|{shipment_id}"),
+            16,
+        )
+        if delivered and survey_hash % 7 == 0:
+            csat = 1 + int(
+                stable_hash(seed, f"csat|{shipment_id}"),
+                16,
+            ) % 5
+            nps = int(
+                stable_hash(seed, f"nps|{shipment_id}"),
+                16,
+            ) % 11
+            comment = survey_comments[
+                int(
+                    stable_hash(seed, f"comment|{shipment_id}"),
+                    16,
+                ) % len(survey_comments)
+            ]
             sent_ts = delivery_ts + timedelta(hours=12)
             survey_rows.append({
                 "response_id": f"CSAT{61000000 + len(survey_rows) + 1}",
@@ -471,9 +500,7 @@ def build_demo_tables(shipment_count=DEFAULT_SHIPMENTS, seed=DEFAULT_SEED):
                 "tms_shipment_id": shipment_id,
                 "csat_score_1_to_5": csat,
                 "nps_score_0_to_10": nps,
-                "comment": (
-                    "Delivery was late." if delay_days > 0 else "Great service."
-                ),
+                "comment": comment,
                 "source_system": "Medallia_Export",
             })
 

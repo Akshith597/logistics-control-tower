@@ -85,6 +85,30 @@ class PipelineUnitTests(unittest.TestCase):
             child_ids = set(first[child_table]["tms_shipment_id"])
             self.assertTrue(child_ids <= shipment_ids)
 
+    def test_demo_survey_scores_are_not_derived_from_delivery_status(self):
+        tables = demo.build_demo_tables(shipment_count=1_200, seed=101)
+        shipments = tables["tms_shipments"][[
+            "tms_shipment_id",
+            "on_time_flag",
+        ]]
+        surveys = tables["csat_survey_responses"].merge(
+            shipments,
+            on="tms_shipment_id",
+            how="left",
+            validate="many_to_one",
+        )
+
+        self.assertEqual(set(surveys["on_time_flag"]), {True, False})
+        for status in (True, False):
+            status_scores = surveys.loc[
+                surveys["on_time_flag"] == status,
+                "csat_score_1_to_5",
+            ]
+            self.assertGreater(status_scores.nunique(), 1)
+        self.assertFalse(
+            surveys["comment"].isin({"Delivery was late.", "Great service."}).any()
+        )
+
     def test_demo_data_rejects_too_few_shipments(self):
         with self.assertRaisesRegex(ValueError, "at least 24"):
             demo.build_demo_tables(shipment_count=23)

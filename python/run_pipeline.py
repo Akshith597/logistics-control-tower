@@ -23,6 +23,24 @@ PIPELINE_STEPS = (
     ("insights", "11_generate_business_insights.py"),
 )
 
+DEMO_INPUT_FILE = PROJECT_ROOT / "data" / "raw" / "demo" / "Logistical_Data.xlsx"
+DEMO_REPORT_DIR = PROJECT_ROOT / "reports" / "demo"
+
+
+def pipeline_environment(generate_demo_data=False):
+    """Build subprocess settings without mixing demo and benchmark outputs."""
+    environment = os.environ.copy()
+    environment.setdefault("PYTHONHASHSEED", "0")
+
+    if generate_demo_data:
+        environment["LOGISTICS_INPUT_FILE"] = str(DEMO_INPUT_FILE)
+        environment["LOGISTICS_REPORT_DIR"] = str(DEMO_REPORT_DIR)
+    else:
+        environment.pop("LOGISTICS_INPUT_FILE", None)
+        environment.pop("LOGISTICS_REPORT_DIR", None)
+
+    return environment
+
 
 def select_steps(start_at="extract", stop_after="insights"):
     """Return an inclusive, validated slice of pipeline steps."""
@@ -54,13 +72,17 @@ def run_pipeline(
         )
 
     selected_steps = select_steps(start_at, stop_after)
-    environment = os.environ.copy()
-    environment.setdefault("PYTHONHASHSEED", "0")
+    environment = pipeline_environment(generate_demo_data)
     pipeline_start = time.perf_counter()
 
     if generate_demo_data:
         generator = PROJECT_ROOT / "python" / "00_generate_demo_data.py"
-        command = [sys.executable, str(generator)]
+        command = [
+            sys.executable,
+            str(generator),
+            "--output",
+            str(DEMO_INPUT_FILE),
+        ]
         if force_demo_data:
             command.append("--force")
         subprocess.run(
@@ -69,6 +91,8 @@ def run_pipeline(
             env=environment,
             check=True,
         )
+        print(f"Demo source: {DEMO_INPUT_FILE.relative_to(PROJECT_ROOT)}")
+        print(f"Demo reports: {DEMO_REPORT_DIR.relative_to(PROJECT_ROOT)}")
 
     for position, (step_name, script_name) in enumerate(selected_steps, 1):
         script_path = PROJECT_ROOT / "python" / script_name
@@ -118,14 +142,15 @@ def parse_args(argv=None):
         action="store_true",
         help=(
             "Generate the deterministic synthetic source workbook before "
-            "running the selected steps."
+            "running the selected steps. Demo outputs use data/raw/demo/ "
+            "and reports/demo/ so tracked benchmark reports are preserved."
         ),
     )
     parser.add_argument(
         "--force-demo-data",
         action="store_true",
         help=(
-            "Allow --generate-demo-data to replace an existing source "
+            "Allow --generate-demo-data to replace the isolated demo "
             "workbook."
         ),
     )

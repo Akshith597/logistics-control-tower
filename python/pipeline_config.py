@@ -1,8 +1,24 @@
 """Shared, deterministic configuration for the logistics pipeline."""
 
+import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def configured_path(environment_name, default):
+    """Resolve an optional path override relative to the project root."""
+    value = os.environ.get(environment_name)
+    path = Path(value) if value else Path(default)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+    return path.resolve()
+
+
+DEFAULT_INPUT_FILE = PROJECT_ROOT / "data" / "raw" / "Logistical_Data.xlsx"
+DEFAULT_REPORT_DIR = PROJECT_ROOT / "reports"
+INPUT_FILE = configured_path("LOGISTICS_INPUT_FILE", DEFAULT_INPUT_FILE)
+REPORT_DIR = configured_path("LOGISTICS_REPORT_DIR", DEFAULT_REPORT_DIR)
 
 SHEET_TABLE_PAIRS = (
     ("ERP_Customers", "erp_customers"),
@@ -46,4 +62,3 @@ POWERBI_EXPORTS = (
     ("mart.vw_customer_scorecard", "vw_customer_scorecard.parquet"),
     ("mart.vw_lane_scorecard", "vw_lane_scorecard.parquet"),
 )
-

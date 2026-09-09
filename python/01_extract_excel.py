@@ -8,12 +8,11 @@ import time
 
 import pandas as pd
 
-from pipeline_config import PROJECT_ROOT, SHEET_TABLE_PAIRS
+from pipeline_config import INPUT_FILE, PROJECT_ROOT, REPORT_DIR, SHEET_TABLE_PAIRS
 from pipeline_utils import atomic_csv
 
-INPUT_FILE = PROJECT_ROOT / "data" / "raw" / "Logistical_Data.xlsx"
 OUTPUT_FOLDER = PROJECT_ROOT / "data" / "processed"
-REPORT_FOLDER = PROJECT_ROOT / "reports"
+REPORT_FOLDER = REPORT_DIR
 
 
 def to_snake_case(value):

@@ -2,11 +2,11 @@ from datetime import datetime
 
 import pandas as pd
 
-from pipeline_config import PROCESSED_TABLES, PROJECT_ROOT
+from pipeline_config import PROCESSED_TABLES, PROJECT_ROOT, REPORT_DIR
 from pipeline_utils import atomic_csv, require_named_files
 
 DATA_FOLDER = PROJECT_ROOT / "data" / "processed"
-REPORT_FOLDER = PROJECT_ROOT / "reports"
+REPORT_FOLDER = REPORT_DIR
 
 PRIMARY_KEYS = {
     "erp_customers": ["erp_customer_id"],

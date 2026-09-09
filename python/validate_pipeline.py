@@ -3,13 +3,17 @@
 import csv
 from pathlib import Path
 
-from pipeline_config import POWERBI_EXPORTS, PROCESSED_TABLES, PROJECT_ROOT
+from pipeline_config import (
+    POWERBI_EXPORTS,
+    PROCESSED_TABLES,
+    PROJECT_ROOT,
+    REPORT_DIR,
+)
 from pipeline_utils import file_sha256, require_file, require_named_files
 
 DATABASE_FILE = PROJECT_ROOT / "database" / "logistics.duckdb"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 POWERBI_DIR = PROJECT_ROOT / "data" / "powerbi"
-REPORT_DIR = PROJECT_ROOT / "reports"
 VALIDATION_SQL_FILE = PROJECT_ROOT / "sql" / "07_validate_model.sql"
 
 DIMENSION_KEYS = {

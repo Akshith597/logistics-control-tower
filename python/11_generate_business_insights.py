@@ -11,9 +11,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from pipeline_config import REPORT_DIR
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_DIR = PROJECT_ROOT / "data" / "powerbi"
-REPORT_DIR = PROJECT_ROOT / "reports"
 
 MIN_CARRIER_OTD_ELIGIBLE = 1_000
 MIN_LANE_OTIF_ELIGIBLE = 250

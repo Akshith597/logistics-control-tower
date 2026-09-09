@@ -1,6 +1,7 @@
 # Raw and processed datasets
 data/raw/*.xlsx
 data/raw/*.xls
+data/raw/demo/
 data/processed/*.csv
 data/processed/*.parquet
 
@@ -16,6 +17,9 @@ data/powerbi/*.parquet
 # Rebuilt local analytical database
 database/*.duckdb
 database/*.wal
+
+# Demo-only report outputs. The root reports/ files are the tracked benchmark.
+reports/demo/
 
 # Credentials and local configuration
 .env

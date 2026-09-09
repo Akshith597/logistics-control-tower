@@ -195,6 +195,21 @@ class PipelineUnitTests(unittest.TestCase):
                 generate_demo_data=True,
             )
 
+    def test_demo_runner_isolates_source_and_report_outputs(self):
+        demo_environment = runner.pipeline_environment(True)
+        self.assertEqual(
+            Path(demo_environment["LOGISTICS_INPUT_FILE"]),
+            runner.DEMO_INPUT_FILE.resolve(),
+        )
+        self.assertEqual(
+            Path(demo_environment["LOGISTICS_REPORT_DIR"]),
+            runner.DEMO_REPORT_DIR.resolve(),
+        )
+
+        production_environment = runner.pipeline_environment(False)
+        self.assertNotIn("LOGISTICS_INPUT_FILE", production_environment)
+        self.assertNotIn("LOGISTICS_REPORT_DIR", production_environment)
+
     def test_model_validation_sql_is_part_of_the_contract(self):
         self.assertTrue(validate.VALIDATION_SQL_FILE.is_file())
         validation_sql = validate.VALIDATION_SQL_FILE.read_text(

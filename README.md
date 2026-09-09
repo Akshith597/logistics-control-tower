@@ -100,14 +100,15 @@ See the full [semantic model specification](powerbi/MODEL_SPEC.md).
 | [`documentation/POWER_BI_QA_RESULTS.md`](documentation/POWER_BI_QA_RESULTS.md) | Completed manual interaction, performance, accessibility, and release review |
 | [`images/Logistics_Control_Tower.pdf`](images/Logistics_Control_Tower.pdf) | Reviewer-friendly export of the authored seven-page report |
 | `images/*.png` | Readable report-page and semantic-model evidence captures |
-| [`reports/`](reports/) | Profiling results, data-quality issues, ranked opportunities, and findings |
+| [`reports/`](reports/) | Full-size benchmark profiling/results; see [`reports/README.md`](reports/README.md) for demo-vs-benchmark provenance |
 | [`tests/`](tests/) | Python unit tests, SQL fixture tests over the real queries, and the end-to-end integration test |
 
 ## Reproduce the pipeline
 
 ### 1. Create the Python environment
 
-Python 3.13 or newer is required; this matches `pyproject.toml` and the CI workflow.
+Python 3.11 or newer is supported; the CI workflow exercises Python 3.11,
+3.12, and 3.13.
 
 ```powershell
 py -m venv .venv
@@ -135,8 +136,12 @@ through all steps with one command:
 python python/run_pipeline.py --generate-demo-data
 ```
 
-The generator refuses to overwrite an existing workbook. Use `--force-demo-data`
-only when you intentionally want to replace it with synthetic demo data.
+The demo run is isolated: it writes `data/raw/demo/` and `reports/demo/`, so it
+does not overwrite the tracked full-size benchmark reports. The demo fixture
+contains 7,200 source shipments and will produce different KPI values from the
+98,595-shipment benchmark used by the headline findings. Use
+`--force-demo-data` only when you intentionally want to replace the existing
+isolated demo workbook.
 
 For targeted development, select an inclusive range of steps:
 

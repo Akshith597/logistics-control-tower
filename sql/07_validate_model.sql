@@ -393,6 +393,44 @@ WITH validation_results AS (
     UNION ALL
 
     SELECT
+        'date dimension has exactly one unknown member',
+        'CRITICAL',
+        CASE
+            WHEN (SELECT COUNT(*) FROM mart.dim_date WHERE unknown_date_flag = TRUE) = 1 THEN 0
+            ELSE 1
+        END
+
+    UNION ALL
+
+    SELECT
+        'all fact date keys resolve',
+        'CRITICAL',
+        (
+            SELECT COUNT(*)
+            FROM mart.fact_shipment AS fact
+            LEFT JOIN mart.dim_date AS ship_date ON fact.ship_date_key = ship_date.date_key
+            LEFT JOIN mart.dim_date AS promised_date ON fact.promised_delivery_date_key = promised_date.date_key
+            LEFT JOIN mart.dim_date AS actual_date ON fact.actual_delivery_date_key = actual_date.date_key
+            WHERE ship_date.date_key IS NULL
+               OR promised_date.date_key IS NULL
+               OR actual_date.date_key IS NULL
+        )
+
+    UNION ALL
+
+    SELECT
+        'fact row count reconciles through ship date',
+        'CRITICAL',
+        CASE
+            WHEN (SELECT COUNT(*) FROM mart.fact_shipment)
+               = (SELECT COUNT(*) FROM mart.fact_shipment AS fact INNER JOIN mart.dim_date AS dimension ON fact.ship_date_key = dimension.date_key)
+            THEN 0
+            ELSE 1
+        END
+
+    UNION ALL
+
+    SELECT
         'carrier accessorial cost reconciles to invoices',
         'CRITICAL',
         CASE

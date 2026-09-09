@@ -305,6 +305,41 @@ Net Promoter Score =
 
 -- 06 Data Quality --------------------------------------------
 
+Shipments with Known Ship Date =
+CALCULATE(
+    [Total Shipments],
+    REMOVEFILTERS('Dim Date'),
+    NOT ISBLANK('Fact Shipment'[ship_date])
+)
+
+Shipments Missing Ship Date =
+CALCULATE(
+    [Total Shipments],
+    REMOVEFILTERS('Dim Date'),
+    ISBLANK('Fact Shipment'[ship_date])
+)
+
+Ship Date Coverage % =
+DIVIDE(
+    [Shipments with Known Ship Date],
+    [Shipments with Known Ship Date]
+        + [Shipments Missing Ship Date]
+)
+
+Revenue with Known Ship Date =
+CALCULATE(
+    [Customer Revenue],
+    REMOVEFILTERS('Dim Date'),
+    NOT ISBLANK('Fact Shipment'[ship_date])
+)
+
+Revenue Missing Ship Date =
+CALCULATE(
+    [Customer Revenue],
+    REMOVEFILTERS('Dim Date'),
+    ISBLANK('Fact Shipment'[ship_date])
+)
+
 Matched Customer Shipments =
 CALCULATE(
     [Total Shipments],

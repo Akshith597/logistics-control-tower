@@ -4,9 +4,9 @@
 
 ```mermaid
 erDiagram
-    DIM_DATE ||--o{ FACT_SHIPMENT : "ship_date (active)"
-    DIM_DATE ||--o{ FACT_SHIPMENT : "promised_delivery_date (inactive)"
-    DIM_DATE ||--o{ FACT_SHIPMENT : "actual_delivery_date (inactive)"
+    DIM_DATE ||--o{ FACT_SHIPMENT : "ship_date_key (active)"
+    DIM_DATE ||--o{ FACT_SHIPMENT : "promised_delivery_date_key (inactive)"
+    DIM_DATE ||--o{ FACT_SHIPMENT : "actual_delivery_date_key (inactive)"
     DIM_CUSTOMER ||--o{ FACT_SHIPMENT : customer_key
     DIM_CARRIER ||--o{ FACT_SHIPMENT : carrier_key
     DIM_WAREHOUSE ||--o{ FACT_SHIPMENT : warehouse_key
@@ -22,9 +22,9 @@ Create these relationships manually. Every relationship uses single-direction fi
 
 | One side | Column | Many side | Column | Active | Cardinality |
 |---|---|---|---|---|---|
-| `Dim Date` | `date_key` | `Fact Shipment` | `ship_date` | Yes | One-to-many |
-| `Dim Date` | `date_key` | `Fact Shipment` | `promised_delivery_date` | No | One-to-many |
-| `Dim Date` | `date_key` | `Fact Shipment` | `actual_delivery_date` | No | One-to-many |
+| `Dim Date` | `date_key` | `Fact Shipment` | `ship_date_key` | Yes | One-to-many |
+| `Dim Date` | `date_key` | `Fact Shipment` | `promised_delivery_date_key` | No | One-to-many |
+| `Dim Date` | `date_key` | `Fact Shipment` | `actual_delivery_date_key` | No | One-to-many |
 | `Dim Customer` | `customer_key` | `Fact Shipment` | `customer_key` | Yes | One-to-many |
 | `Dim Carrier` | `carrier_key` | `Fact Shipment` | `carrier_key` | Yes | One-to-many |
 | `Dim Warehouse` | `warehouse_key` | `Fact Shipment` | `warehouse_key` | Yes | One-to-many |
@@ -64,7 +64,7 @@ Do not enable bidirectional filtering and do not relate the QA tables. The inact
 
 ## Date behavior
 
-The visible date slicer filters shipments by `ship_date`. Measures named `Delivered Shipments (Actual Date)` and `Promised Shipments (Promised Date)` switch to the appropriate inactive relationship. Label visuals clearly when they use a date role other than shipment creation date.
+The visible date slicer filters shipments by `ship_date_key`. Measures named `Delivered Shipments (Actual Date)` and `Promised Shipments (Promised Date)` switch to the appropriate inactive relationship. Label visuals clearly when they use a date role other than shipment creation date.
 
 Use a hierarchy of `year` > `quarter_label` > `month_name` > `date_key`. Do not use Power BI's automatic date/time hierarchy; disable Auto date/time for this file.
 

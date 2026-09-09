@@ -2,6 +2,17 @@
 
 Use this checklist before treating `Logistics_Control_Tower.pbix` as complete. It validates the semantic model, business definitions, interactions, performance, and portfolio presentation.
 
+## Current portfolio status
+
+- Automated Python/SQL checks: pass locally (57 tests; Ruff clean).
+- Local PBIX: authored with seven pages, saved, and configured to open on Executive Overview. The Data Quality page includes the missing-ship-date disclosures described below.
+- PDF evidence: [`images/Logistics_Control_Tower.pdf`](../images/Logistics_Control_Tower.pdf) has been exported from the authored report.
+- Screenshot evidence: four readable page captures and one model-view capture are present in `images/`.
+- Manual interaction and Performance Analyzer review: completed; see [`POWER_BI_QA_RESULTS.md`](POWER_BI_QA_RESULTS.md).
+- Accessibility review: completed as a release-gate finding. Static inspection found explicit alt text on 4 of 97 visuals, so the report is not yet accessibility-complete.
+- Generated Parquet exports are ignored build outputs. If OneDrive marks an existing export unavailable to DuckDB, regenerate the exports locally before investigating a model mismatch.
+- The checklist below remains partially open for semantic-model reconciliation and accessibility remediation; the completed evidence package and observed findings are recorded rather than marked as passing by assumption.
+
 ## 1. Refresh and model integrity
 
 - [ ] All seven core Parquet queries refresh without errors.
@@ -86,6 +97,10 @@ Exact agreement is expected for the metrics present in each QA table. Difference
 ## 5. Data-quality communication
 
 - [ ] The Data Quality page is included in the published report.
+- [ ] `Shipments with Known Ship Date` plus `Shipments Missing Ship Date` equals `Total Shipments` with all report filters cleared.
+- [ ] `Revenue with Known Ship Date` plus `Revenue Missing Ship Date` equals `Customer Revenue` within $0.01 with all report filters cleared.
+- [ ] The full-size model reports 11,976 shipments and $8,807,904 in revenue with no ship date; investigate any difference after refreshing the supplied dataset.
+- [ ] Date-axis visuals state that monthly trends include known ship dates only and direct readers to the missing-date cards.
 - [ ] Customer, carrier, warehouse, invoice, and WMS match rates are shown.
 - [ ] Fill-rate and survey coverage are shown beside KPIs that depend on them.
 - [ ] The synthetic-data notice is visible in the report information panel.
@@ -111,11 +126,11 @@ Exact agreement is expected for the metrics present in each QA table. Difference
 A strong repository handoff includes all of the following:
 
 - [ ] `powerbi/Logistics_Control_Tower.pbix`
-- [ ] A PDF export of the report
-- [ ] Four or more readable page screenshots in `images/`
-- [ ] A model-view screenshot showing the star schema
+- [x] A PDF export of the report
+- [x] Four or more readable page screenshots in `images/`
+- [x] A model-view screenshot showing the star schema
 - [ ] A short findings section with quantified insights and carefully scoped recommendations
-- [ ] A root README section linking the PBIX/PDF/screenshots and explaining how to refresh the data
+- [x] A root README section linking the PBIX/PDF/screenshots and explaining how to refresh the data
 - [ ] A note listing the Power BI Desktop version used for final validation
 
-The text assets in `powerbi/` make the model reproducible, but they do not substitute for an authored PBIX, final screenshots, or a human visual QA pass in Power BI Desktop.
+The authored local report is available at `powerbi/Logistics_Control_Tower.pbix`, but the binary is intentionally ignored. The text assets in `powerbi/` make the model reproducible; attach the reviewed PBIX as a release artifact when publishing. The current QA finding that blocks an accessibility-complete claim is the 4/97 explicit-alt-text coverage documented in `POWER_BI_QA_RESULTS.md`.

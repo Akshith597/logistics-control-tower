@@ -133,4 +133,4 @@ A strong repository handoff includes all of the following:
 - [x] A root README section linking the PBIX/PDF/screenshots and explaining how to refresh the data
 - [ ] A note listing the Power BI Desktop version used for final validation
 
-The authored local report is available at `powerbi/Logistics_Control_Tower.pbix`, but the binary is intentionally ignored. The text assets in `powerbi/` make the model reproducible; attach the reviewed PBIX as a release artifact when publishing. The current QA finding that blocks an accessibility-complete claim is the 4/97 explicit-alt-text coverage documented in `POWER_BI_QA_RESULTS.md`.
+The authored local report is available at `powerbi/Logistics_Control_Tower.pbix`, but the binary is intentionally ignored. The text assets in `powerbi/` make the model reproducible; the reviewed PBIX is attached to the [v1.0.0 GitHub release](https://github.com/Akshith597/logistics-control-tower/releases/tag/v1.0.0). The current QA finding that blocks an accessibility-complete claim is the 4/97 explicit-alt-text coverage documented in `POWER_BI_QA_RESULTS.md`.

@@ -98,3 +98,6 @@ visual refresh performance, PDF rendering, and model-view evidence. The
 accessibility audit is recorded in
 `documentation/POWER_BI_QA_RESULTS.md`; it found explicit alt text on 4 of 97
 visuals, so remediate that gap before claiming accessibility-complete release.
+The reviewed PBIX is attached to the
+`v1.0.0` release of the public GitHub repository for recruiters who want to
+open the interactive report.

@@ -30,3 +30,6 @@ __pycache__/
 # Power BI temporary files
 *.pbit.tmp
 *.pbix.tmp
+
+# Local handoff notes
+HANDOFF.md

@@ -71,7 +71,8 @@ The target values supplied in `KPI Targets` are portfolio demonstration assumpti
 2. Build the pages and interactions in [REPORT_BLUEPRINT.md](REPORT_BLUEPRINT.md).
 3. Use a 16:9 canvas, consistent page navigation, and a maximum of six primary visuals per page.
 4. Add a “Data through” subtitle using the `Data Through Date` measure. It reads the latest `Fact Shipment[ship_date]` and intentionally ignores only `Dim Date` filters, so a date slicer cannot make the dataset appear older than it is.
-5. Add descriptive alt text to every non-decorative visual and do not use color as the only status signal.
+5. On the Data Quality page, add `Ship Date Coverage %`, `Shipments Missing Ship Date`, and `Revenue Missing Ship Date`. Add the known-date trend note specified in the report blueprint so monthly visuals reconcile transparently to unfiltered totals.
+6. Add descriptive alt text to every non-decorative visual and do not use color as the only status signal.
 
 ## 5. Validate before publishing
 
@@ -87,4 +88,13 @@ Follow [POWER_BI_VALIDATION.md](../documentation/POWER_BI_VALIDATION.md). At min
 
 Save the authored report as `powerbi/Logistics_Control_Tower.pbix`. Export a PDF and capture at least the Executive Overview, Carrier & Lane, Profitability, and Data Quality pages into `images/` for a repository reviewer who does not have Power BI Desktop.
 
-The repository currently supplies the complete build specification but a `.pbix` must still be authored and visually reviewed in Power BI Desktop.
+The authored local report is now saved as `powerbi/Logistics_Control_Tower.pbix`,
+and the current seven-page PDF export is available at
+`images/Logistics_Control_Tower.pdf`.
+Because `.pbix` is ignored and Power BI Desktop is required to render it, attach
+a reviewed copy or PDF and screenshots alongside a public repository release.
+The local report has been manually checked for page navigation, cross-filtering,
+visual refresh performance, PDF rendering, and model-view evidence. The
+accessibility audit is recorded in
+`documentation/POWER_BI_QA_RESULTS.md`; it found explicit alt text on 4 of 97
+visuals, so remediate that gap before claiming accessibility-complete release.

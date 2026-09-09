@@ -98,12 +98,14 @@ Always display `Survey Response Coverage %` beside CSAT/NPS so sparse survey dat
 | Area | Visual | Fields / measures |
 |---|---|---|
 | Match cards | Cards | `Customer Match Rate`, `Carrier Match Rate`, `Warehouse Match Rate`, `Invoice Match Rate`, `WMS Match Rate` |
-| KPI coverage | Cards | `Fill Rate Coverage %`, `Survey Response Coverage %`, `OTD Eligible Shipments`, `OTIF Eligible Shipments` |
+| KPI coverage | Cards | `Ship Date Coverage %`, `Shipments Missing Ship Date`, `Revenue Missing Ship Date`, `Fill Rate Coverage %`, `Survey Response Coverage %`, `OTD Eligible Shipments`, `OTIF Eligible Shipments` |
 | Unknowns | Matrix | Dimension and unknown shipment count, derived from total minus matched shipments |
 | Coverage trend | Line chart | Monthly invoice/WMS/survey coverage |
 | QA note | Text box | Data source, synthetic-data notice, shipment grain, refresh timestamp, official KPI eligibility rule |
 
 This page should remain in the published portfolio. It demonstrates that the report communicates data limitations rather than hiding them.
+
+Label date-axis visuals with the note: “Monthly trends include shipments with a known ship date; undated shipments are reported on the Data Quality page.” The missing-date measures intentionally ignore only the `Dim Date` filter, so they remain visible when a date slicer is active while continuing to respect customer, carrier, warehouse, service, and lane selections.
 
 ## Interaction and QA rules
 

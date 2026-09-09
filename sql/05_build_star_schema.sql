@@ -9,6 +9,8 @@ CREATE SCHEMA IF NOT EXISTS quality;
 
 -- ============================================================
 -- DATE DIMENSION
+-- A contiguous calendar from the sentinel preserves Power BI DATEADD behavior
+-- while giving facts with missing dates an explicit Unknown member.
 -- ============================================================
 
 CREATE OR REPLACE TABLE mart.dim_date AS
@@ -29,24 +31,32 @@ WITH date_bounds AS (
 ),
 
 calendar AS (
-    SELECT CAST(calendar_date AS DATE) AS date_key
+    SELECT
+        CAST(calendar_date AS DATE) AS date_key,
+        bounds.minimum_date
 
-    FROM date_bounds,
+    FROM date_bounds AS bounds,
 
     GENERATE_SERIES(
-        minimum_date,
-        maximum_date,
+        DATE '1900-01-01',
+        bounds.maximum_date,
         INTERVAL 1 DAY
     ) AS dates(calendar_date)
 )
 
 SELECT
     date_key,
+    CASE
+        WHEN date_key = DATE '1900-01-01' THEN 'Unknown'
+        WHEN date_key < minimum_date THEN 'Filler'
+        ELSE 'Actual'
+    END AS date_type,
+    date_key = DATE '1900-01-01' AS unknown_date_flag,
     EXTRACT(YEAR FROM date_key)::INTEGER AS year,
     EXTRACT(QUARTER FROM date_key)::INTEGER AS quarter,
     EXTRACT(MONTH FROM date_key)::INTEGER AS month_number,
-    STRFTIME(date_key, '%B') AS month_name,
-    STRFTIME(date_key, '%Y-%m') AS year_month,
+    CASE WHEN date_key = DATE '1900-01-01' THEN 'Unknown' ELSE STRFTIME(date_key, '%B') END AS month_name,
+    CASE WHEN date_key = DATE '1900-01-01' THEN 'Unknown' ELSE STRFTIME(date_key, '%Y-%m') END AS year_month,
     EXTRACT(WEEK FROM date_key)::INTEGER AS week_number,
     EXTRACT(DAY FROM date_key)::INTEGER AS day_of_month,
     EXTRACT(DOW FROM date_key)::INTEGER AS day_of_week_number,
@@ -634,10 +644,13 @@ fact_base AS (
             ) AS lane_key,
 
         shipment.ship_create_date AS ship_date,
+        COALESCE(shipment.ship_create_date, DATE '1900-01-01') AS ship_date_key,
         shipment.promised_delivery_date,
+        COALESCE(shipment.promised_delivery_date, DATE '1900-01-01') AS promised_delivery_date_key,
         CAST(
             shipment.actual_delivery_ts AS DATE
         ) AS actual_delivery_date,
+        COALESCE(CAST(shipment.actual_delivery_ts AS DATE), DATE '1900-01-01') AS actual_delivery_date_key,
 
         shipment.sales_order_id,
         shipment.customer_po,

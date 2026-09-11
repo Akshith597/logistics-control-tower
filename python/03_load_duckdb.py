@@ -1,3 +1,9 @@
+"""Load the extracted Parquet tables into the local DuckDB raw schema."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from pathlib import Path
 import re
 
 from pipeline_config import PROCESSED_TABLES, PROJECT_ROOT
@@ -12,7 +18,7 @@ DATABASE_FOLDER = PROJECT_ROOT / "database"
 DATABASE_FILE = DATABASE_FOLDER / "logistics.duckdb"
 
 
-def valid_table_name(value):
+def valid_table_name(value: str) -> str:
     """Allow only safe SQL table names."""
     if not re.fullmatch(r"[a-z][a-z0-9_]*", value):
         raise ValueError(f"Invalid table name: {value}")
@@ -21,10 +27,10 @@ def valid_table_name(value):
 
 
 def load_database(
-    parquet_folder=PARQUET_FOLDER,
-    database_file=DATABASE_FILE,
-    table_names=PROCESSED_TABLES,
-):
+    parquet_folder: Path = PARQUET_FOLDER,
+    database_file: Path = DATABASE_FILE,
+    table_names: Sequence[str] = PROCESSED_TABLES,
+) -> None:
     parquet_files = require_named_files(
         parquet_folder,
         table_names,

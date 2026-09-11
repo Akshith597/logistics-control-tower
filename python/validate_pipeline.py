@@ -1,5 +1,8 @@
 """Validate the materialized database and Power BI export contracts."""
 
+from __future__ import annotations
+
+from collections.abc import Sequence
 import csv
 from pathlib import Path
 
@@ -26,11 +29,13 @@ DIMENSION_KEYS = {
 }
 
 
-def sql_path(path):
+def sql_path(path: Path | str) -> str:
     return Path(path).resolve().as_posix().replace("'", "''")
 
 
-def sql_validation_checks(rows):
+def sql_validation_checks(
+    rows: Sequence[tuple[str, str, int, str]],
+) -> list[tuple[str, bool, str]]:
     """Convert validation-query rows into named pass/fail conditions."""
     checks = [(
         "model validation SQL returned checks",
@@ -52,12 +57,12 @@ def sql_validation_checks(rows):
 
 
 def validate_pipeline(
-    database_file=DATABASE_FILE,
-    processed_dir=PROCESSED_DIR,
-    powerbi_dir=POWERBI_DIR,
-    report_dir=REPORT_DIR,
-    validation_sql_file=VALIDATION_SQL_FILE,
-):
+    database_file: Path = DATABASE_FILE,
+    processed_dir: Path = PROCESSED_DIR,
+    powerbi_dir: Path = POWERBI_DIR,
+    report_dir: Path = REPORT_DIR,
+    validation_sql_file: Path = VALIDATION_SQL_FILE,
+) -> list[str]:
     """Run cross-layer checks and raise once with every observed failure."""
     import duckdb
 
@@ -91,7 +96,7 @@ def validate_pipeline(
     failures = []
     passed = []
 
-    def check(name, condition, detail=""):
+    def check(name: str, condition: bool, detail: str = "") -> None:
         if condition:
             passed.append(name)
         else:

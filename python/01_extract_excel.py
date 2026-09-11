@@ -1,3 +1,8 @@
+"""Extract each source sheet into a typed, contract-checked Parquet table."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
 from datetime import datetime
 import gc
 import numbers
@@ -15,7 +20,7 @@ OUTPUT_FOLDER = PROJECT_ROOT / "data" / "processed"
 REPORT_FOLDER = REPORT_DIR
 
 
-def to_snake_case(value):
+def to_snake_case(value: object) -> str:
     """Convert a column name into lowercase snake_case."""
     value = str(value).strip()
     value = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", value)
@@ -24,7 +29,7 @@ def to_snake_case(value):
     return value.strip("_").lower()
 
 
-def normalize_columns(columns):
+def normalize_columns(columns: Sequence[object]) -> list[str]:
     """Normalize headers and reject blanks or collisions before extraction."""
     normalized = [to_snake_case(column) for column in columns]
     blank_columns = [
@@ -52,7 +57,7 @@ def normalize_columns(columns):
     return normalized
 
 
-def should_be_text(column):
+def should_be_text(column: str) -> bool:
     """Identify columns that should remain text."""
     text_patterns = [
         "_id",
@@ -93,9 +98,9 @@ def should_be_text(column):
     )
 
 
-def preserve_text_columns(dataframe):
+def preserve_text_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
     """Prevent business identifiers from becoming numeric values."""
-    def text_value(value):
+    def text_value(value: object) -> object:
         if pd.isna(value):
             return pd.NA
         if isinstance(value, bool):
@@ -118,10 +123,10 @@ def preserve_text_columns(dataframe):
 
 
 def extract_workbook(
-    input_file=INPUT_FILE,
-    output_folder=OUTPUT_FOLDER,
-    report_folder=REPORT_FOLDER,
-):
+    input_file: Path = INPUT_FILE,
+    output_folder: Path = OUTPUT_FOLDER,
+    report_folder: Path = REPORT_FOLDER,
+) -> None:
     input_file = Path(input_file).resolve()
     output_folder = Path(output_folder).resolve()
     report_folder = Path(report_folder).resolve()

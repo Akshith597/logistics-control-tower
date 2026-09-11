@@ -1,3 +1,7 @@
+"""Stage claims, CRM tickets, and survey responses at shipment grain."""
+
+from pathlib import Path
+
 from pipeline_config import PROJECT_ROOT
 from pipeline_utils import duckdb_transaction, require_file
 
@@ -14,7 +18,10 @@ SQL_FILE = (
 )
 
 
-def run_sql(database_file=DATABASE_FILE, sql_file=SQL_FILE):
+def run_sql(
+    database_file: Path = DATABASE_FILE,
+    sql_file: Path = SQL_FILE,
+) -> None:
     sql_file = require_file(sql_file, "SQL file")
     sql = sql_file.read_text(encoding="utf-8")
 

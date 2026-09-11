@@ -24,6 +24,63 @@
 
 Add a short dynamic narrative that states selected shipment volume, the OTD target gap, margin direction, and the largest late-shipment contributor. Keep it descriptive; do not claim causation.
 
+### Executive Overview layout geometry
+
+The 1280 x 720 canvas is divided into a fixed header band, a KPI strip, and two
+content rows. Authoring the strip by hand produces uneven cards and titles that
+wrap into their own values, so set position and size numerically in the **Format
+> General > Properties** pane rather than by dragging:
+
+| Element | X | Y | Width | Height |
+|---|---:|---:|---:|---:|
+| Page title | 24 | 16 | 420 | 40 |
+| `Shipment Date` slicer | 812 | 16 | 220 | 48 |
+| `Transportation Mode` slicer | 1044 | 16 | 212 | 48 |
+| KPI cards 1–6 | 24 + (n-1) x 206 | 76 | 194 | 96 |
+| Monthly service combo chart | 24 | 188 | 610 | 268 |
+| Monthly gross margin chart | 646 | 188 | 610 | 268 |
+| Risk ranking bar chart | 24 | 472 | 1232 | 224 |
+
+Rules that keep the strip readable:
+
+- **Six cards, equal width.** The KPI strip carries exactly the six measures
+  listed above. A seventh metric goes in a tooltip or the action-queue matrix,
+  never squeezed into the strip.
+- **Card titles must not wrap.** Set each card's title explicitly and shorten it
+  to fit 194 px — use `Complaints / 1K` rather than
+  `Complaints per 1,000 Shipments`, and turn word wrap off so an overflowing
+  title is caught during authoring instead of colliding with its value.
+- **Slicers belong in the header band**, right-aligned and above the KPI strip.
+  Do not let a slicer float over the strip's vertical space.
+- **The last-data-date label is context, not a KPI.** Render it as a 12 px
+  subtitle beneath the page title, not as a card whose value is set in a larger
+  type size than the actual KPIs.
+- **Encode the risk ranking.** The late-shipment bars carry a second dimension
+  through color: apply conditional formatting on `On-Time Delivery %` so a long
+  bar with weak OTD is visually distinct from a long bar that is merely
+  high-volume. A single flat series makes the visual a volume list, not a risk
+  ranking. State the measure driving the color in the visual subtitle.
+
+## Screenshot and PDF capture protocol
+
+The captures in `images/` are the numbers most reviewers actually read, so they
+must agree with the tracked benchmark in `reports/executive_summary.csv`. Card
+values are evaluated in the filter context saved with the report, and a slicer
+left narrower than the data range silently shifts them.
+
+Before exporting any PNG or PDF:
+
+1. **Clear every slicer and cross-filter.** On each page use *Reset to default*,
+   then confirm the `Shipment Date` slicer spans the full range through the last
+   shipment date and that no chart element is selected.
+2. **Confirm the unfiltered anchor.** `Total Shipments` must read 98,595. If the
+   card shows a lower number, a filter is still active and the export is invalid.
+3. **Reconcile before publishing.** Check the exported Full-Fill Rate and Gross
+   Margin % against `reports/executive_summary.csv` (81.4% and 66.8% on the
+   benchmark build). A mismatch means step 1 was incomplete — fix the filter
+   state and re-export rather than annotating the difference.
+4. **Re-export every page in one pass** so all captures share one filter state.
+
 ## Page 2 — Carrier & Lane Performance
 
 **Question:** Which transportation partners and lanes combine poor service with high cost?

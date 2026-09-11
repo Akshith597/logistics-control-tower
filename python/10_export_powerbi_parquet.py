@@ -1,3 +1,8 @@
+"""Export the mart tables and KPI views as validated Parquet files."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -9,16 +14,16 @@ OUTPUT_DIR = PROJECT_ROOT / "data" / "powerbi"
 EXPORTS = POWERBI_EXPORTS
 
 
-def sql_path(path):
+def sql_path(path: Path) -> str:
     """Return a safely quoted path for a DuckDB SQL string literal."""
     return path.resolve().as_posix().replace("'", "''")
 
 
 def export_powerbi_files(
-    database_file=DATABASE_FILE,
-    output_dir=OUTPUT_DIR,
-    exports=EXPORTS,
-):
+    database_file: Path = DATABASE_FILE,
+    output_dir: Path = OUTPUT_DIR,
+    exports: Sequence[tuple[str, str]] = EXPORTS,
+) -> None:
     import duckdb
 
     database_file = require_file(database_file, "Database")

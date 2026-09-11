@@ -5,9 +5,8 @@ data/raw/demo/
 data/processed/*.csv
 data/processed/*.parquet
 
-# Power BI model exports. These are rebuilt by pipeline step 10
-# (python/10_export_powerbi_parquet.py) and are deliberately not tracked, to
-# keep the repository free of large regenerable binaries.
+# Power BI model exports. The public deployment snapshot lives in the tracked
+# data/public_dashboard/ directory; these local pipeline outputs stay ignored.
 data/powerbi/*.parquet
 
 # Authored Power BI report. Binary, produced by Power BI Desktop rather than by

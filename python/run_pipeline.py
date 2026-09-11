@@ -1,6 +1,9 @@
 """Run the complete logistics analytics pipeline in a reproducible order."""
 
+from __future__ import annotations
+
 import argparse
+from collections.abc import Sequence
 import os
 import subprocess
 import sys
@@ -27,7 +30,9 @@ DEMO_INPUT_FILE = PROJECT_ROOT / "data" / "raw" / "demo" / "Logistical_Data.xlsx
 DEMO_REPORT_DIR = PROJECT_ROOT / "reports" / "demo"
 
 
-def pipeline_environment(generate_demo_data=False):
+def pipeline_environment(
+    generate_demo_data: bool = False,
+) -> dict[str, str]:
     """Build subprocess settings without mixing demo and benchmark outputs."""
     environment = os.environ.copy()
     environment.setdefault("PYTHONHASHSEED", "0")
@@ -42,7 +47,10 @@ def pipeline_environment(generate_demo_data=False):
     return environment
 
 
-def select_steps(start_at="extract", stop_after="insights"):
+def select_steps(
+    start_at: str = "extract",
+    stop_after: str = "insights",
+) -> tuple[tuple[str, str], ...]:
     """Return an inclusive, validated slice of pipeline steps."""
     step_names = tuple(name for name, _ in PIPELINE_STEPS)
     start_index = step_names.index(start_at)
@@ -57,12 +65,12 @@ def select_steps(start_at="extract", stop_after="insights"):
 
 
 def run_pipeline(
-    start_at="extract",
-    stop_after="insights",
+    start_at: str = "extract",
+    stop_after: str = "insights",
     *,
-    generate_demo_data=False,
-    force_demo_data=False,
-):
+    generate_demo_data: bool = False,
+    force_demo_data: bool = False,
+) -> None:
     """Execute each selected script with the current Python interpreter."""
     if force_demo_data and not generate_demo_data:
         raise ValueError("force_demo_data requires generate_demo_data")
@@ -120,7 +128,7 @@ def run_pipeline(
     )
 
 
-def parse_args(argv=None):
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     step_names = tuple(name for name, _ in PIPELINE_STEPS)
     parser = argparse.ArgumentParser(
         description="Run the logistics control-tower data pipeline."
@@ -157,7 +165,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def main(argv=None):
+def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     if args.force_demo_data and not args.generate_demo_data:
         raise SystemExit(

@@ -6,7 +6,10 @@ than derived from delivery delay, so the analysis layer cannot manufacture a
 delivery-to-CSAT finding by construction.
 """
 
+from __future__ import annotations
+
 import argparse
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 import hashlib
 from pathlib import Path
@@ -21,13 +24,13 @@ DEFAULT_SEED = 20250830
 DEFAULT_SHIPMENTS = 7200
 
 
-def stable_hash(seed, value):
+def stable_hash(seed: int, value: object) -> str:
     """Return a compact deterministic hash suitable for demo row lineage."""
     payload = f"{seed}|{value}".encode()
     return hashlib.sha256(payload).hexdigest()[:16]
 
 
-def build_reference_tables():
+def build_reference_tables() -> dict[str, pd.DataFrame]:
     customers = []
     customer_names = (
         ("Northstar Medical Supply LLC", "Healthcare", "OH", "High"),
@@ -169,7 +172,10 @@ def build_reference_tables():
     }
 
 
-def build_demo_tables(shipment_count=DEFAULT_SHIPMENTS, seed=DEFAULT_SEED):
+def build_demo_tables(
+    shipment_count: int = DEFAULT_SHIPMENTS,
+    seed: int = DEFAULT_SEED,
+) -> dict[str, pd.DataFrame]:
     """Build all source tables with deterministic values and valid joins."""
     if shipment_count < 24:
         raise ValueError("shipment_count must be at least 24")
@@ -517,18 +523,18 @@ def build_demo_tables(shipment_count=DEFAULT_SHIPMENTS, seed=DEFAULT_SEED):
     return tables
 
 
-def display_column_name(column_name):
+def display_column_name(column_name: str) -> str:
     """Create readable Excel headers that normalize back to the contract name."""
     return column_name.replace("_", " ").title()
 
 
 def write_demo_workbook(
-    output_file=DEFAULT_OUTPUT,
+    output_file: Path = DEFAULT_OUTPUT,
     *,
-    shipment_count=DEFAULT_SHIPMENTS,
-    seed=DEFAULT_SEED,
-    force=False,
-):
+    shipment_count: int = DEFAULT_SHIPMENTS,
+    seed: int = DEFAULT_SEED,
+    force: bool = False,
+) -> Path:
     """Write all demo tables to the workbook expected by the extractor."""
     output_file = Path(output_file)
     if output_file.exists() and not force:
@@ -579,7 +585,7 @@ def write_demo_workbook(
     return output_file
 
 
-def parse_args(argv=None):
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate deterministic demo data for the logistics project."
     )
@@ -609,7 +615,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def main(argv=None):
+def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     write_demo_workbook(
         args.output,

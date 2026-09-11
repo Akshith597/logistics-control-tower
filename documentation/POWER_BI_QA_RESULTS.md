@@ -5,6 +5,10 @@ Reviewed against the locally authored `powerbi/Logistics_Control_Tower.pbix` on
 measures and note were updated, then returned to the Executive Overview landing
 page.
 
+The recruiter-facing export contains five polished narrative pages. Shipment
+Detail remains a hidden drillthrough page, and Data Quality remains a hidden
+diagnostic page inside the PBIX.
+
 ## Manual interaction
 
 - **Executive Overview cross-filter:** selecting a monthly bar changed the KPI
@@ -18,6 +22,10 @@ page.
   shows the shipment fact, six dimensions, measure tables, and relationships.
 - **Reset state:** the report was left with no temporary month selection and
   Executive Overview active.
+- **KPI correction:** OTIF now divides OTIF shipments by OTIF-eligible shipments;
+  the full-report card displays 62.4%.
+- **Warehouse diagnostic:** the late-shipment decomposition tree is expanded by
+  warehouse, replacing the previously empty-looking visual.
 
 ## Performance Analyzer
 
@@ -48,13 +56,32 @@ keyboard/tab order are added to the remaining visuals.
 
 ## Automated evidence
 
-- `python -m unittest discover -s tests -v`: **57 tests passed**.
+- `python -m unittest discover -s tests -v`: **59 tests passed**.
 - `python -m ruff check .`: **passed**.
 - `python python/10_export_powerbi_parquet.py`: **13 exports completed**.
 - `python python/validate_pipeline.py`: **passed** with 98,595 fact shipments.
-- PDF export: **7 pages**, visually readable in the repository preview.
+- PDF export: **5 recruiter-facing pages**, visually inspected after export.
 - Repository evidence: four page screenshots plus one model-view screenshot are
   present under `images/`.
+
+## Open finding: capture filter state
+
+`images/Executive_Overview.png` shows Full-Fill Rate 81.3% and Gross Margin %
+66.7%, while the tracked benchmark in `reports/executive_summary.csv` holds
+0.813661 and 0.667930, which round to 81.4% and 66.8%. The same capture shows
+the `Shipment Date` slicer ending before the reported last shipment date of
+December 15, 2025, and its trend charts stop at 2025-11, so the cards were
+evaluated in a narrowed filter context rather than over the full fact table.
+On-Time Delivery % and OTIF % are unaffected at this precision, which is why the
+gap is easy to miss.
+
+The pipeline numbers are correct and unchanged; only the exported images carry
+the narrowed context. The fix is to re-export the PNGs and the PDF under the
+capture protocol now recorded in `powerbi/REPORT_BLUEPRINT.md`, which requires
+Power BI Desktop. Until that re-export happens, the README states that
+`reports/executive_summary.csv` is the authoritative reconciliation target.
+
+Status: **open**, tracked, and disclosed rather than silently reconciled.
 
 ## Release decision
 

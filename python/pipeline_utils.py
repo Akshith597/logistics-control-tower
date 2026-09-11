@@ -1,11 +1,19 @@
 """Small reliability helpers shared by the Python pipeline scripts."""
 
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 import hashlib
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import duckdb
+    import pandas as pd
 
 
-def require_file(path, label="Required file"):
+def require_file(path: Path | str, label: str = "Required file") -> Path:
     """Return *path* or fail before a library creates an empty replacement."""
     path = Path(path)
     if not path.is_file():
@@ -13,7 +21,11 @@ def require_file(path, label="Required file"):
     return path
 
 
-def require_named_files(folder, names, suffix=""):
+def require_named_files(
+    folder: Path | str,
+    names: Iterable[str],
+    suffix: str = "",
+) -> tuple[Path, ...]:
     """Validate a complete input contract and return paths in contract order."""
     folder = Path(folder)
     paths = tuple(folder / f"{name}{suffix}" for name in names)
@@ -29,7 +41,7 @@ def require_named_files(folder, names, suffix=""):
     return paths
 
 
-def file_sha256(file_path):
+def file_sha256(file_path: Path | str) -> str:
     """Return a stable source fingerprint for data-lineage checks."""
     digest = hashlib.sha256()
     with Path(file_path).open("rb") as source:
@@ -39,7 +51,11 @@ def file_sha256(file_path):
 
 
 @contextmanager
-def duckdb_transaction(database_file, *, must_exist=True):
+def duckdb_transaction(
+    database_file: Path | str,
+    *,
+    must_exist: bool = True,
+) -> Iterator[duckdb.DuckDBPyConnection]:
     """Yield a DuckDB connection and commit or roll back the complete step."""
     import duckdb
 
@@ -67,7 +83,12 @@ def duckdb_transaction(database_file, *, must_exist=True):
         connection.close()
 
 
-def atomic_csv(dataframe, output_file, *, columns=None):
+def atomic_csv(
+    dataframe: pd.DataFrame,
+    output_file: Path | str,
+    *,
+    columns: Sequence[str] | None = None,
+) -> None:
     """Write a CSV with a stable schema and replace the prior file on success."""
     output_file = Path(output_file)
     output_file.parent.mkdir(parents=True, exist_ok=True)

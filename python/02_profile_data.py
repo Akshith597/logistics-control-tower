@@ -1,4 +1,10 @@
+"""Profile the extracted tables and publish the data-quality reports."""
+
+from __future__ import annotations
+
+from collections.abc import Collection
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 
@@ -75,7 +81,7 @@ QUALITY_REPORT_COLUMNS = (
 )
 
 
-def reset_profile_state():
+def reset_profile_state() -> None:
     """Make repeated in-process runs produce independent reports."""
     table_profiles.clear()
     column_profiles.clear()
@@ -84,12 +90,12 @@ def reset_profile_state():
 
 
 def add_issue(
-    table_name,
-    check_name,
-    issue_count,
-    severity,
-    description,
-):
+    table_name: str,
+    check_name: str,
+    issue_count: int,
+    severity: str,
+    description: str,
+) -> None:
     quality_issues.append({
         "table_name": table_name,
         "check_name": check_name,
@@ -100,7 +106,7 @@ def add_issue(
     })
 
 
-def normalize_identifier(series):
+def normalize_identifier(series: pd.Series) -> pd.Series:
     normalized = (
         series.astype("string")
         .str.strip()
@@ -109,7 +115,7 @@ def normalize_identifier(series):
     return normalized.mask(normalized.eq(""))
 
 
-def profile_table(file_path):
+def profile_table(file_path: Path) -> None:
     table_name = file_path.stem
 
     print(f"Profiling {table_name}...")
@@ -263,13 +269,13 @@ def profile_table(file_path):
 
 
 def check_relationship(
-    child_table,
-    child_column,
-    parent_values,
-    severity,
-    description,
-    data_folder=DATA_FOLDER,
-):
+    child_table: str,
+    child_column: str,
+    parent_values: Collection[object],
+    severity: str,
+    description: str,
+    data_folder: Path = DATA_FOLDER,
+) -> None:
     child_path = data_folder / f"{child_table}.parquet"
 
     child_data = pd.read_parquet(
@@ -296,7 +302,7 @@ def check_relationship(
     )
 
 
-def run_business_checks(data_folder=DATA_FOLDER):
+def run_business_checks(data_folder: Path = DATA_FOLDER) -> None:
     print()
     print("Running cross-table and business-rule checks...")
 
@@ -656,7 +662,7 @@ def run_business_checks(data_folder=DATA_FOLDER):
     )
 
 
-def save_reports(report_folder=REPORT_FOLDER):
+def save_reports(report_folder: Path = REPORT_FOLDER) -> None:
     report_folder.mkdir(parents=True, exist_ok=True)
 
     atomic_csv(
@@ -705,7 +711,10 @@ def save_reports(report_folder=REPORT_FOLDER):
     print(f"Reports saved to: {report_folder}")
 
 
-def main(data_folder=DATA_FOLDER, report_folder=REPORT_FOLDER):
+def main(
+    data_folder: Path = DATA_FOLDER,
+    report_folder: Path = REPORT_FOLDER,
+) -> None:
     reset_profile_state()
     print("=" * 60)
     print("LOGISTICS DATA PROFILING")

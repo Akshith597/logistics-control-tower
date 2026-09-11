@@ -6,7 +6,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
-def configured_path(environment_name, default):
+def configured_path(environment_name: str, default: Path | str) -> Path:
     """Resolve an optional path override relative to the project root."""
     value = os.environ.get(environment_name)
     path = Path(value) if value else Path(default)

@@ -290,7 +290,7 @@ with left:
                     "Late shipments": "{:,.0f}",
                 }
             ),
-            use_container_width=True,
+            width="stretch",
         )
 
 with right:
@@ -326,7 +326,7 @@ with right:
                     "Shipments": "{:,.0f}",
                 }
             ),
-            use_container_width=True,
+            width="stretch",
         )
 
 st.subheader("Lane exception queue")
@@ -370,7 +370,7 @@ else:
                 "Margin": "${:,.0f}",
             }
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
 with st.expander("What this project demonstrates"):

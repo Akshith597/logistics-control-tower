@@ -189,6 +189,32 @@ WITH validation_results AS (
     UNION ALL
 
     SELECT
+        'shipment dates stay within the declared 2024-2025 fixture window',
+        'CRITICAL',
+        (
+            SELECT COUNT(*)
+            FROM mart.fact_shipment
+            WHERE ship_date < DATE '2024-01-01'
+               OR ship_date > DATE '2025-12-31'
+        )
+
+    UNION ALL
+
+    SELECT
+        'aggregate gross margin is positive',
+        'CRITICAL',
+        CASE
+            WHEN COALESCE(
+                (SELECT SUM(gross_margin_usd) FROM mart.fact_shipment),
+                0
+            ) > 0
+            THEN 0
+            ELSE 1
+        END
+
+    UNION ALL
+
+    SELECT
         'OTIF flag follows its documented rule',
         'CRITICAL',
         (

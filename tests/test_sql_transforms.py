@@ -1143,12 +1143,22 @@ class ValidationSuiteTests(SqlFixtureTestCase):
             tms_shipments=[
                 shipment("S_CLEAN"),
                 shipment("S_LATE", actual_delivery_ts="2024-01-09 09:00:00"),
-                shipment("S_NO_CUSTOMER", erp_customer_id_ref="GHOST",
-                         tms_customer_code="ZZ-999"),
-                shipment("S_NO_LANE", origin_warehouse_id=None,
-                         dest_state=None, dest_city=None),
-                shipment("S_IN_TRANSIT", shipment_status="IN_TRANSIT",
-                         actual_delivery_ts=None),
+                shipment(
+                    "S_NO_CUSTOMER",
+                    erp_customer_id_ref="GHOST",
+                    tms_customer_code="ZZ-999",
+                ),
+                shipment(
+                    "S_NO_LANE",
+                    origin_warehouse_id=None,
+                    dest_state=None,
+                    dest_city=None,
+                ),
+                shipment(
+                    "S_IN_TRANSIT",
+                    shipment_status="IN_TRANSIT",
+                    actual_delivery_ts=None,
+                ),
                 shipment("S_VOID", is_void="true"),
                 shipment("S_PARENT"),
                 shipment("S_CHILD", parent_tms_shipment_id="S_PARENT"),
@@ -1192,11 +1202,14 @@ class ValidationSuiteTests(SqlFixtureTestCase):
                 },
             ],
             erp_invoices=[
-                _invoice("I1", "S_CLEAN", "CUSTOMER",
-                         accessorial_amount_usd="12.34"),
-                _invoice("I2", "S_CLEAN", "CARRIER_BILL",
-                         accessorial_amount_usd="7.89",
-                         fuel_surcharge_usd="1.11"),
+                _invoice("I1", "S_CLEAN", "CUSTOMER", accessorial_amount_usd="12.34"),
+                _invoice(
+                    "I2",
+                    "S_CLEAN",
+                    "CARRIER_BILL",
+                    accessorial_amount_usd="7.89",
+                    fuel_surcharge_usd="1.11",
+                ),
                 _invoice("I3", None, "CUSTOMER", sales_order_id="SO-S_LATE"),
                 _invoice("I4", None, "CUSTOMER", pro_number="PRO-S_LATE"),
                 _invoice("I5", None, "CUSTOMER", sales_order_id="SO-GHOST"),
@@ -1214,31 +1227,38 @@ class ValidationSuiteTests(SqlFixtureTestCase):
                 },
             ],
             csat_survey_responses=[
-                _survey("R1", tms_shipment_id="S_CLEAN",
-                        csat_score_1_to_5="9"),
-                _survey("R2", tms_shipment_id="S_CLEAN",
-                        csat_score_1_to_5="4", nps_score_0_to_10="10"),
+                _survey("R1", tms_shipment_id="S_CLEAN", csat_score_1_to_5="9"),
+                _survey(
+                    "R2",
+                    tms_shipment_id="S_CLEAN",
+                    csat_score_1_to_5="4",
+                    nps_score_0_to_10="10",
+                ),
             ],
         )
 
     def test_every_critical_validation_passes_on_adversarial_input(self):
         connection = self._adversarial_fixture()
-        validation_sql = (
-            SQL_DIR / "07_validate_model.sql"
-        ).read_text(encoding="utf-8")
+        validation_sql = (SQL_DIR / "07_validate_model.sql").read_text(encoding="utf-8")
 
         results = connection.execute(validation_sql).fetchall()
         failures = [row[0] for row in results if row[3] != "PASS"]
 
         self.assertEqual(failures, [])
-        self.assertGreaterEqual(len(results), 26)
+        self.assertGreaterEqual(len(results), 28)
+        test_names = {row[0] for row in results}
+        self.assertIn("aggregate gross margin is positive", test_names)
+        self.assertIn(
+            "shipment dates stay within the declared 2024-2025 fixture window",
+            test_names,
+        )
 
     def test_the_portfolio_analysis_query_runs_against_the_model(self):
         """The showcase SQL must stay in step with the schema it queries."""
         connection = self._adversarial_fixture()
-        analysis_sql = (
-            SQL_DIR / "08_portfolio_analysis.sql"
-        ).read_text(encoding="utf-8")
+        analysis_sql = (SQL_DIR / "08_portfolio_analysis.sql").read_text(
+            encoding="utf-8"
+        )
 
         connection.execute(analysis_sql)
 

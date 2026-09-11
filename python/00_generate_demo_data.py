@@ -46,26 +46,26 @@ def build_reference_tables() -> dict[str, pd.DataFrame]:
         start=1,
     ):
         customer_id = f"{10004520 + index}"
-        customers.append({
-            "erp_customer_id": customer_id,
-            "legal_name": name,
-            "dba_name": name.split()[0],
-            "parent_erp_customer_id": None,
-            "industry": industry,
-            "customer_status": "Active",
-            "payment_terms": "Net 30" if index % 2 else "Net 45",
-            "credit_limit_usd": 50000.0 + index * 15000.0,
-            "primary_bill_to_state": state,
-            "account_owner_email": (
-                f"account{index}@example-corp.invalid"
-            ),
-            "created_date": date(2018, index, min(index * 3, 28)),
-            "last_modified_ts": datetime(2025, 12, 15, 9, index),
-            "source_system": "ERP",
-            "is_test_account": False,
-            "notes": None,
-            "annual_volume_tier": tier,
-        })
+        customers.append(
+            {
+                "erp_customer_id": customer_id,
+                "legal_name": name,
+                "dba_name": name.split()[0],
+                "parent_erp_customer_id": None,
+                "industry": industry,
+                "customer_status": "Active",
+                "payment_terms": "Net 30" if index % 2 else "Net 45",
+                "credit_limit_usd": 50000.0 + index * 15000.0,
+                "primary_bill_to_state": state,
+                "account_owner_email": (f"account{index}@example-corp.invalid"),
+                "created_date": date(2018, index, min(index * 3, 28)),
+                "last_modified_ts": datetime(2025, 12, 15, 9, index),
+                "source_system": "ERP",
+                "is_test_account": False,
+                "notes": None,
+                "annual_volume_tier": tier,
+            }
+        )
 
     crosswalk = [
         {
@@ -239,7 +239,10 @@ def build_demo_tables(
         service_code, service_name, planned_days = service_levels[
             (index - 1) % len(service_levels)
         ]
-        ship_date = date(2024, 1, 1) + timedelta(days=(index - 1) * 3)
+        # Cycle the deterministic fixture across exactly two calendar years.
+        # The modulo keeps large demo runs realistic instead of drifting decades
+        # into the future as shipment_count grows.
+        ship_date = date(2024, 1, 1) + timedelta(days=((index - 1) * 3) % 731)
         create_ts = datetime.combine(ship_date, datetime.min.time())
         create_ts += timedelta(hours=8 + index % 6, minutes=index % 60)
         pickup_ts = create_ts + timedelta(hours=2 + index % 5)
@@ -256,72 +259,68 @@ def build_demo_tables(
 
         delivered = not canceled
         on_time = None if not delivered else delay_days <= 0
-        mode_multiplier = {"Parcel": 1.0, "LTL": 2.8, "FTL": 5.5}[
-            carrier["mode"]
-        ]
+        mode_multiplier = {"Parcel": 1.0, "LTL": 2.8, "FTL": 5.5}[carrier["mode"]]
         weight = round(35 + (index % 45) * 18.75 * mode_multiplier, 2)
         lane_miles = destination[3] + (index % 9) * 17.5
         revenue = round(95 + lane_miles * 0.38 * mode_multiplier, 2)
         cost_ratio = 0.68 + (index % 6) * 0.025
         cost = round(revenue * cost_ratio, 2)
         tracking_number = f"TRK{6000000000 + index:010d}"
-        pro_number = (
-            f"PRO{80000000 + index}" if carrier["mode"] != "Parcel" else None
-        )
-        bol_number = (
-            f"BOL{500000 + index}" if carrier["mode"] == "FTL" else None
-        )
+        pro_number = f"PRO{80000000 + index}" if carrier["mode"] != "Parcel" else None
+        bol_number = f"BOL{500000 + index}" if carrier["mode"] == "FTL" else None
         pieces = 1 + index % 12
         short_pick = index % 13 == 0
         line_count = 1 + index % 3
 
-        shipments.append({
-            "tms_shipment_id": shipment_id,
-            "tms_customer_code": customer_code,
-            "erp_customer_id_ref": customer["erp_customer_id"],
-            "sales_order_id": sales_order_id,
-            "customer_po": f"PO-{40000 + index}",
-            "bol_number": bol_number,
-            "pro_number": pro_number,
-            "tracking_number": tracking_number,
-            "origin_warehouse_id": warehouse["warehouse_id"],
-            "origin_wms_code": warehouse["wms_location_code"],
-            "dest_name": f"{customer['dba_name']} - {destination[0]}",
-            "dest_address1": f"{100 + index} Commerce Parkway",
-            "dest_city": destination[0],
-            "dest_state": destination[1],
-            "dest_postal": destination[2],
-            "dest_country": "US",
-            "is_residential": index % 8 == 0,
-            "carrier_id": carrier["carrier_id"],
-            "carrier_scac": carrier["scac"],
-            "mode": carrier["mode"],
-            "service_level_code": service_code,
-            "service_level_name": service_name,
-            "planned_transit_days": planned_days,
-            "lane_miles_est": round(lane_miles, 1),
-            "ship_create_date": ship_date,
-            "ship_create_ts": create_ts,
-            "promised_delivery_date": promised_date,
-            "actual_pickup_ts": None if canceled else pickup_ts,
-            "actual_delivery_ts": delivery_ts,
-            "shipment_status": "CANCELED" if canceled else "DELIVERED",
-            "exception_code": "WX" if delay_days > 0 and delivered else None,
-            "weight_lb": weight,
-            "pieces": pieces,
-            "freight_class": None if carrier["mode"] == "Parcel" else 70.0,
-            "estimated_revenue_usd": revenue,
-            "estimated_cost_usd": cost,
-            "currency": "USD",
-            "on_time_flag": on_time,
-            "is_void": canceled,
-            "is_re_tender": False,
-            "parent_tms_shipment_id": None,
-            "source_system": "TMS",
-            "extract_batch_id": f"TMS_DAILY_{ship_date:%Y%m%d}",
-            "last_update_ts": (delivery_ts or create_ts) + timedelta(hours=3),
-            "row_hash": stable_hash(seed, shipment_id),
-        })
+        shipments.append(
+            {
+                "tms_shipment_id": shipment_id,
+                "tms_customer_code": customer_code,
+                "erp_customer_id_ref": customer["erp_customer_id"],
+                "sales_order_id": sales_order_id,
+                "customer_po": f"PO-{40000 + index}",
+                "bol_number": bol_number,
+                "pro_number": pro_number,
+                "tracking_number": tracking_number,
+                "origin_warehouse_id": warehouse["warehouse_id"],
+                "origin_wms_code": warehouse["wms_location_code"],
+                "dest_name": f"{customer['dba_name']} - {destination[0]}",
+                "dest_address1": f"{100 + index} Commerce Parkway",
+                "dest_city": destination[0],
+                "dest_state": destination[1],
+                "dest_postal": destination[2],
+                "dest_country": "US",
+                "is_residential": index % 8 == 0,
+                "carrier_id": carrier["carrier_id"],
+                "carrier_scac": carrier["scac"],
+                "mode": carrier["mode"],
+                "service_level_code": service_code,
+                "service_level_name": service_name,
+                "planned_transit_days": planned_days,
+                "lane_miles_est": round(lane_miles, 1),
+                "ship_create_date": ship_date,
+                "ship_create_ts": create_ts,
+                "promised_delivery_date": promised_date,
+                "actual_pickup_ts": None if canceled else pickup_ts,
+                "actual_delivery_ts": delivery_ts,
+                "shipment_status": "CANCELED" if canceled else "DELIVERED",
+                "exception_code": "WX" if delay_days > 0 and delivered else None,
+                "weight_lb": weight,
+                "pieces": pieces,
+                "freight_class": None if carrier["mode"] == "Parcel" else 70.0,
+                "estimated_revenue_usd": revenue,
+                "estimated_cost_usd": cost,
+                "currency": "USD",
+                "on_time_flag": on_time,
+                "is_void": canceled,
+                "is_re_tender": False,
+                "parent_tms_shipment_id": None,
+                "source_system": "TMS",
+                "extract_batch_id": f"TMS_DAILY_{ship_date:%Y%m%d}",
+                "last_update_ts": (delivery_ts or create_ts) + timedelta(hours=3),
+                "row_hash": stable_hash(seed, shipment_id),
+            }
+        )
 
         for line_number in range(1, line_count + 1):
             sku, description, unit_weight = product_catalog[
@@ -329,34 +328,38 @@ def build_demo_tables(
             ]
             ordered = 2 + (index * line_number) % 18
             shipped = ordered - 1 if short_pick and line_number == 1 else ordered
-            shipment_lines.append({
-                "tms_shipment_id": shipment_id,
-                "line_number": line_number,
-                "sku": sku,
-                "description": description,
-                "qty_ordered": ordered,
-                "qty_shipped": shipped,
-                "unit_weight_lb": unit_weight,
-                "hazardous_flag": sku == "SKU-4400" and index % 10 == 0,
-                "source_system": "TMS",
-            })
+            shipment_lines.append(
+                {
+                    "tms_shipment_id": shipment_id,
+                    "line_number": line_number,
+                    "sku": sku,
+                    "description": description,
+                    "qty_ordered": ordered,
+                    "qty_shipped": shipped,
+                    "unit_weight_lb": unit_weight,
+                    "hazardous_flag": sku == "SKU-4400" and index % 10 == 0,
+                    "source_system": "TMS",
+                }
+            )
 
-        wms_rows.append({
-            "wms_outbound_id": f"WMS{700000 + index}",
-            "wms_location_code": warehouse["wms_location_code"],
-            "sales_order_id": sales_order_id,
-            "tms_shipment_id": shipment_id,
-            "pick_start_ts": create_ts - timedelta(hours=6),
-            "pack_complete_ts": create_ts - timedelta(hours=2),
-            "ship_confirm_ts": create_ts,
-            "lines_picked": line_count,
-            "short_pick_flag": short_pick,
-            "inventory_accuracy_snapshot": round(
-                0.965 + randomizer.random() * 0.034,
-                4,
-            ),
-            "source_system": "WMS",
-        })
+        wms_rows.append(
+            {
+                "wms_outbound_id": f"WMS{700000 + index}",
+                "wms_location_code": warehouse["wms_location_code"],
+                "sales_order_id": sales_order_id,
+                "tms_shipment_id": shipment_id,
+                "pick_start_ts": create_ts - timedelta(hours=6),
+                "pack_complete_ts": create_ts - timedelta(hours=2),
+                "ship_confirm_ts": create_ts,
+                "lines_picked": line_count,
+                "short_pick_flag": short_pick,
+                "inventory_accuracy_snapshot": round(
+                    0.965 + randomizer.random() * 0.034,
+                    4,
+                ),
+                "source_system": "WMS",
+            }
+        )
 
         event_plan = [
             ("BOOKED", "Shipment booked", create_ts),
@@ -376,26 +379,28 @@ def build_demo_tables(
             event_plan.append(("CANCEL", "Shipment canceled", create_ts))
 
         for event_code, event_description, event_ts in event_plan:
-            tracking_events.append({
-                "column1": f"EVT{event_number}",
-                "tms_shipment_id": shipment_id,
-                "tracking_number": tracking_number,
-                "event_code": event_code,
-                "event_description": event_description,
-                "event_ts_utc": event_ts + timedelta(hours=5),
-                "event_ts_local": event_ts,
-                "event_city": (
-                    warehouse["city"] if event_code != "DLV" else destination[0]
-                ),
-                "event_state": (
-                    warehouse["state"] if event_code != "DLV" else destination[1]
-                ),
-                "exception_reason": (
-                    "Weather" if event_code == "EXCEPTION" else None
-                ),
-                "source": "EDI_214",
-                "ingested_ts": event_ts + timedelta(minutes=12),
-            })
+            tracking_events.append(
+                {
+                    "column1": f"EVT{event_number}",
+                    "tms_shipment_id": shipment_id,
+                    "tracking_number": tracking_number,
+                    "event_code": event_code,
+                    "event_description": event_description,
+                    "event_ts_utc": event_ts + timedelta(hours=5),
+                    "event_ts_local": event_ts,
+                    "event_city": (
+                        warehouse["city"] if event_code != "DLV" else destination[0]
+                    ),
+                    "event_state": (
+                        warehouse["state"] if event_code != "DLV" else destination[1]
+                    ),
+                    "exception_reason": (
+                        "Weather" if event_code == "EXCEPTION" else None
+                    ),
+                    "source": "EDI_214",
+                    "ingested_ts": event_ts + timedelta(minutes=12),
+                }
+            )
             event_number += 1
 
         if delivered:
@@ -404,52 +409,56 @@ def build_demo_tables(
                 ("CUSTOMER", revenue),
                 ("CARRIER_BILL", cost),
             ):
-                invoice_rows.append({
-                    "invoice_id": f"INV{900000 + invoice_number}",
-                    "invoice_type": invoice_type,
-                    "erp_customer_id": customer["erp_customer_id"],
-                    "tms_shipment_id": shipment_id,
-                    "sales_order_id": sales_order_id,
-                    "pro_number": pro_number,
-                    "invoice_date": invoice_date,
-                    "gl_post_date": invoice_date + timedelta(days=1),
-                    "line_amount_usd": amount,
-                    "accessorial_amount_usd": (
-                        18.0
-                        if delay_days > 0
-                        and invoice_type == "CARRIER_BILL"
-                        else 0.0
-                    ),
-                    "fuel_surcharge_usd": (
-                        round(amount * 0.08, 2)
-                        if invoice_type == "CARRIER_BILL"
-                        else 0.0
-                    ),
-                    "tax_usd": round(revenue * 0.04, 2)
-                    if invoice_type == "CUSTOMER"
-                    else 0.0,
-                    "currency": "USD",
-                    "payment_status": "Paid" if index % 9 else "Open",
-                    "dispute_flag": index % 37 == 0,
-                    "source_system": "ERP",
-                })
+                invoice_rows.append(
+                    {
+                        "invoice_id": f"INV{900000 + invoice_number}",
+                        "invoice_type": invoice_type,
+                        "erp_customer_id": customer["erp_customer_id"],
+                        "tms_shipment_id": shipment_id,
+                        "sales_order_id": sales_order_id,
+                        "pro_number": pro_number,
+                        "invoice_date": invoice_date,
+                        "gl_post_date": invoice_date + timedelta(days=1),
+                        "line_amount_usd": amount,
+                        "accessorial_amount_usd": (
+                            18.0
+                            if delay_days > 0 and invoice_type == "CARRIER_BILL"
+                            else 0.0
+                        ),
+                        "fuel_surcharge_usd": (
+                            round(amount * 0.08, 2)
+                            if invoice_type == "CARRIER_BILL"
+                            else 0.0
+                        ),
+                        "tax_usd": round(revenue * 0.04, 2)
+                        if invoice_type == "CUSTOMER"
+                        else 0.0,
+                        "currency": "USD",
+                        "payment_status": "Paid" if index % 9 else "Open",
+                        "dispute_flag": index % 37 == 0,
+                        "source_system": "ERP",
+                    }
+                )
                 invoice_number += 1
 
         if delivered and index % 17 == 0:
-            requested = round(175 + index * 4.25, 2)
-            claim_rows.append({
-                "claim_id": f"CLM{800 + len(claim_rows) + 1}",
-                "tms_shipment_id": shipment_id,
-                "pro_number": pro_number,
-                "claim_type": "Damage" if index % 2 else "Shortage",
-                "filed_date": delivery_ts.date() + timedelta(days=4),
-                "claim_amount_requested_usd": requested,
-                "claim_amount_paid_usd": round(requested * 0.72, 2),
-                "claim_status": "Paid",
-                "carrier_id": carrier["carrier_id"],
-                "source_system": "Claims",
-                "adjuster_notes": "Demo claim reviewed",
-            })
+            # Claims remain material without growing unbounded with row number.
+            requested = round(175 + (index % 40) * 4.25, 2)
+            claim_rows.append(
+                {
+                    "claim_id": f"CLM{800 + len(claim_rows) + 1}",
+                    "tms_shipment_id": shipment_id,
+                    "pro_number": pro_number,
+                    "claim_type": "Damage" if index % 2 else "Shortage",
+                    "filed_date": delivery_ts.date() + timedelta(days=4),
+                    "claim_amount_requested_usd": requested,
+                    "claim_amount_paid_usd": round(requested * 0.72, 2),
+                    "claim_status": "Paid",
+                    "carrier_id": carrier["carrier_id"],
+                    "source_system": "Claims",
+                    "adjuster_notes": "Demo claim reviewed",
+                }
+            )
 
         if delivered and index % 11 == 0:
             categories = (
@@ -459,67 +468,81 @@ def build_demo_tables(
                 "Billing Question",
             )
             category = categories[(index // 11) % len(categories)]
-            ticket_rows.append({
-                "ticket_id": f"TKT-{5000 + len(ticket_rows) + 1}",
-                "opened_ts": delivery_ts + timedelta(hours=8),
-                "erp_customer_id": customer["erp_customer_id"],
-                "tms_customer_code": customer_code,
-                "tms_shipment_id": shipment_id,
-                "tracking_number": tracking_number,
-                "channel": "Email" if index % 2 else "Phone",
-                "category_raw": category,
-                "severity": "High" if delay_days > 0 else "Medium",
-                "status": "Resolved",
-                "subject": category,
-                "description_free_text": (
-                    "Synthetic customer issue for portfolio analysis."
-                ),
-                "resolution_hours": float(6 + index % 42),
-                "source_system": "CRM",
-            })
+            ticket_rows.append(
+                {
+                    "ticket_id": f"TKT-{5000 + len(ticket_rows) + 1}",
+                    "opened_ts": delivery_ts + timedelta(hours=8),
+                    "erp_customer_id": customer["erp_customer_id"],
+                    "tms_customer_code": customer_code,
+                    "tms_shipment_id": shipment_id,
+                    "tracking_number": tracking_number,
+                    "channel": "Email" if index % 2 else "Phone",
+                    "category_raw": category,
+                    "severity": "High" if delay_days > 0 else "Medium",
+                    "status": "Resolved",
+                    "subject": category,
+                    "description_free_text": (
+                        "Synthetic customer issue for portfolio analysis."
+                    ),
+                    "resolution_hours": float(6 + index % 42),
+                    "source_system": "CRM",
+                }
+            )
 
         survey_hash = int(
             stable_hash(seed, f"survey|{shipment_id}"),
             16,
         )
         if delivered and survey_hash % 7 == 0:
-            csat = 1 + int(
-                stable_hash(seed, f"csat|{shipment_id}"),
-                16,
-            ) % 5
-            nps = int(
-                stable_hash(seed, f"nps|{shipment_id}"),
-                16,
-            ) % 11
+            csat = (
+                1
+                + int(
+                    stable_hash(seed, f"csat|{shipment_id}"),
+                    16,
+                )
+                % 5
+            )
+            nps = (
+                int(
+                    stable_hash(seed, f"nps|{shipment_id}"),
+                    16,
+                )
+                % 11
+            )
             comment = survey_comments[
                 int(
                     stable_hash(seed, f"comment|{shipment_id}"),
                     16,
-                ) % len(survey_comments)
+                )
+                % len(survey_comments)
             ]
             sent_ts = delivery_ts + timedelta(hours=12)
-            survey_rows.append({
-                "response_id": f"CSAT{61000000 + len(survey_rows) + 1}",
-                "survey_sent_ts": sent_ts,
-                "response_ts": sent_ts + timedelta(days=2),
-                "erp_customer_id": customer["erp_customer_id"],
-                "tms_shipment_id": shipment_id,
-                "csat_score_1_to_5": csat,
-                "nps_score_0_to_10": nps,
-                "comment": comment,
-                "source_system": "Medallia_Export",
-            })
+            survey_rows.append(
+                {
+                    "response_id": f"CSAT{61000000 + len(survey_rows) + 1}",
+                    "survey_sent_ts": sent_ts,
+                    "response_ts": sent_ts + timedelta(days=2),
+                    "erp_customer_id": customer["erp_customer_id"],
+                    "tms_shipment_id": shipment_id,
+                    "csat_score_1_to_5": csat,
+                    "nps_score_0_to_10": nps,
+                    "comment": comment,
+                    "source_system": "Medallia_Export",
+                }
+            )
 
-    tables.update({
-        "tms_shipments": pd.DataFrame(shipments),
-        "tms_shipment_lines": pd.DataFrame(shipment_lines),
-        "carrier_tracking_events": pd.DataFrame(tracking_events),
-        "wms_outbound": pd.DataFrame(wms_rows),
-        "erp_invoices": pd.DataFrame(invoice_rows),
-        "claims": pd.DataFrame(claim_rows),
-        "crm_tickets": pd.DataFrame(ticket_rows),
-        "csat_survey_responses": pd.DataFrame(survey_rows),
-    })
+    tables.update(
+        {
+            "tms_shipments": pd.DataFrame(shipments),
+            "tms_shipment_lines": pd.DataFrame(shipment_lines),
+            "carrier_tracking_events": pd.DataFrame(tracking_events),
+            "wms_outbound": pd.DataFrame(wms_rows),
+            "erp_invoices": pd.DataFrame(invoice_rows),
+            "claims": pd.DataFrame(claim_rows),
+            "crm_tickets": pd.DataFrame(ticket_rows),
+            "csat_survey_responses": pd.DataFrame(survey_rows),
+        }
+    )
     return tables
 
 
@@ -557,9 +580,7 @@ def write_demo_workbook(
             writer.book.properties.modified = datetime(2025, 1, 1)
 
             for sheet_name, table_name in SHEET_TABLE_PAIRS:
-                dataframe = tables[table_name].rename(
-                    columns=display_column_name
-                )
+                dataframe = tables[table_name].rename(columns=display_column_name)
                 dataframe.to_excel(
                     writer,
                     sheet_name=sheet_name,

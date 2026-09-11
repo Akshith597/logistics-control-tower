@@ -87,10 +87,12 @@ class PipelineUnitTests(unittest.TestCase):
 
     def test_demo_survey_scores_are_not_derived_from_delivery_status(self):
         tables = demo.build_demo_tables(shipment_count=1_200, seed=101)
-        shipments = tables["tms_shipments"][[
-            "tms_shipment_id",
-            "on_time_flag",
-        ]]
+        shipments = tables["tms_shipments"][
+            [
+                "tms_shipment_id",
+                "on_time_flag",
+            ]
+        ]
         surveys = tables["csat_survey_responses"].merge(
             shipments,
             on="tms_shipment_id",
@@ -113,6 +115,21 @@ class PipelineUnitTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "at least 24"):
             demo.build_demo_tables(shipment_count=23)
 
+    def test_large_demo_stays_within_2024_and_2025(self):
+        shipments = demo.build_demo_tables(shipment_count=7_200)["tms_shipments"]
+
+        self.assertEqual(shipments["ship_create_date"].min().isoformat(), "2024-01-01")
+        self.assertLessEqual(
+            shipments["ship_create_date"].max().isoformat(),
+            "2025-12-31",
+        )
+
+    def test_demo_claim_values_are_bounded(self):
+        claims = demo.build_demo_tables(shipment_count=7_200)["claims"]
+
+        self.assertGreater(len(claims), 0)
+        self.assertLessEqual(claims["claim_amount_requested_usd"].max(), 340.75)
+
     def test_column_normalization_rejects_collisions(self):
         self.assertEqual(
             extract.normalize_columns(
@@ -124,10 +141,12 @@ class PipelineUnitTests(unittest.TestCase):
             extract.normalize_columns(["Shipment ID", "Shipment-ID"])
 
     def test_identifier_conversion_does_not_corrupt_text_suffixes(self):
-        dataframe = pd.DataFrame({
-            "customer_id": [123.0, "ABC.0", None],
-            "legal_name": ["Version.0", "Other", None],
-        })
+        dataframe = pd.DataFrame(
+            {
+                "customer_id": [123.0, "ABC.0", None],
+                "legal_name": ["Version.0", "Other", None],
+            }
+        )
         result = extract.preserve_text_columns(dataframe)
         self.assertEqual(result["customer_id"].iloc[0], "123")
         self.assertEqual(result["customer_id"].iloc[1], "ABC.0")
@@ -168,8 +187,8 @@ class PipelineUnitTests(unittest.TestCase):
                     must_exist=False,
                 ) as connection,
             ):
-                    connection.execute("CREATE TABLE should_rollback (id INTEGER)")
-                    raise RuntimeError("test failure")
+                connection.execute("CREATE TABLE should_rollback (id INTEGER)")
+                raise RuntimeError("test failure")
 
             connection = duckdb.connect(str(database_file), read_only=True)
             try:
@@ -236,32 +255,34 @@ class PipelineUnitTests(unittest.TestCase):
 
     def test_model_validation_sql_is_part_of_the_contract(self):
         self.assertTrue(validate.VALIDATION_SQL_FILE.is_file())
-        validation_sql = validate.VALIDATION_SQL_FILE.read_text(
-            encoding="utf-8"
-        )
+        validation_sql = validate.VALIDATION_SQL_FILE.read_text(encoding="utf-8")
         self.assertIn("validation_status", validation_sql)
 
     def test_model_validation_failures_are_not_treated_as_passes(self):
-        checks = validate.sql_validation_checks([
-            ("healthy check", "CRITICAL", 0, "PASS"),
-            ("broken check", "CRITICAL", 2, "FAIL"),
-        ])
+        checks = validate.sql_validation_checks(
+            [
+                ("healthy check", "CRITICAL", 0, "PASS"),
+                ("broken check", "CRITICAL", 2, "FAIL"),
+            ]
+        )
         conditions = {name: condition for name, condition, _ in checks}
         self.assertTrue(conditions["SQL [CRITICAL] healthy check"])
         self.assertFalse(conditions["SQL [CRITICAL] broken check"])
 
     def test_insight_context_uses_exact_metric_denominators(self):
-        fact = pd.DataFrame({
-            "official_kpi_eligible_flag": [True, True, True, False],
-            "final_on_time_flag": [True, False, None, True],
-            "otif_flag": [True, False, None, True],
-            "shipment_fill_rate": [1.0, 0.5, None, 1.0],
-            "survey_response_count": [1, 0, 0, 1],
-            "ship_date": ["2025-01-01"] * 4,
-            "shipment_status": ["DELIVERED"] * 4,
-            "customer_key": ["C1", "C1", "C2", "C2"],
-            "actual_delivery_date": ["2025-01-02", None, None, "2025-01-02"],
-        })
+        fact = pd.DataFrame(
+            {
+                "official_kpi_eligible_flag": [True, True, True, False],
+                "final_on_time_flag": [True, False, None, True],
+                "otif_flag": [True, False, None, True],
+                "shipment_fill_rate": [1.0, 0.5, None, 1.0],
+                "survey_response_count": [1, 0, 0, 1],
+                "ship_date": ["2025-01-01"] * 4,
+                "shipment_status": ["DELIVERED"] * 4,
+                "customer_key": ["C1", "C1", "C2", "C2"],
+                "actual_delivery_date": ["2025-01-02", None, None, "2025-01-02"],
+            }
+        )
         context = insights.build_analysis_context(fact)
         self.assertEqual(context["otd_eligible_shipments"], 2)
         self.assertEqual(context["otif_eligible_shipments"], 2)
@@ -272,20 +293,20 @@ class PipelineUnitTests(unittest.TestCase):
         self.assertEqual(context["missing_otif_result_shipments"], 1)
 
     def test_delivery_impact_weights_valid_csat_by_response_count(self):
-        fact = pd.DataFrame({
-            "official_kpi_eligible_flag": [True, True, True, True],
-            "final_on_time_flag": [True, True, False, False],
-            "survey_response_count": [1, 3, 2, 10],
-            "valid_csat_response_count": [1, 2, 1, 0],
-            "average_csat_score": [5.0, 3.0, 2.0, None],
-            "complaint_flag": [False, False, True, True],
-            "claim_flag": [False, False, True, False],
-            "days_late": [0, 0, 2, 3],
-            "shipment_key": ["S1", "S2", "S3", "S4"],
-        })
-        impact = insights.build_delivery_impact(fact).set_index(
-            "delivery_status"
+        fact = pd.DataFrame(
+            {
+                "official_kpi_eligible_flag": [True, True, True, True],
+                "final_on_time_flag": [True, True, False, False],
+                "survey_response_count": [1, 3, 2, 10],
+                "valid_csat_response_count": [1, 2, 1, 0],
+                "average_csat_score": [5.0, 3.0, 2.0, None],
+                "complaint_flag": [False, False, True, True],
+                "claim_flag": [False, False, True, False],
+                "days_late": [0, 0, 2, 3],
+                "shipment_key": ["S1", "S2", "S3", "S4"],
+            }
         )
+        impact = insights.build_delivery_impact(fact).set_index("delivery_status")
         self.assertEqual(impact.loc["On time", "csat_observations"], 3)
         self.assertAlmostEqual(impact.loc["On time", "average_csat"], 11 / 3)
         self.assertEqual(impact.loc["Late", "csat_observations"], 1)
@@ -293,12 +314,14 @@ class PipelineUnitTests(unittest.TestCase):
 
     def test_eligibility_counts_keep_otd_and_otif_denominators_separate(self):
         scorecard = pd.DataFrame({"carrier_key": ["C1", "C2"]})
-        fact = pd.DataFrame({
-            "carrier_key": ["C1", "C1", "C1", "C1", "C2"],
-            "official_kpi_eligible_flag": [True, True, False, True, True],
-            "final_on_time_flag": [True, False, True, None, True],
-            "otif_flag": [True, None, True, False, True],
-        })
+        fact = pd.DataFrame(
+            {
+                "carrier_key": ["C1", "C1", "C1", "C1", "C2"],
+                "official_kpi_eligible_flag": [True, True, False, True, True],
+                "final_on_time_flag": [True, False, True, None, True],
+                "otif_flag": [True, None, True, False, True],
+            }
+        )
         result = insights.add_eligibility_counts(
             scorecard,
             fact,
@@ -416,8 +439,10 @@ class PipelineIntegrationTests(unittest.TestCase):
             )
             self.assertTrue((powerbi_dir / "fact_shipment.parquet").is_file())
             duplicate_header = (
-                report_dir / "duplicate_keys.csv"
-            ).read_text(encoding="utf-8").splitlines()[0]
+                (report_dir / "duplicate_keys.csv")
+                .read_text(encoding="utf-8")
+                .splitlines()[0]
+            )
             self.assertIn("duplicate_count", duplicate_header)
 
 

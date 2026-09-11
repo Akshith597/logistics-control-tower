@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Logistics Control Tower portfolio case study: shipment service, profitability, and exception intelligence.">
+  <title>Logistics Control Tower | Portfolio Case Study</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307141f'/%3E%3Cpath d='M12 18h27v25H12zM39 27h8l7 8v8H39z' fill='%2337d5c8'/%3E%3Ccircle cx='22' cy='47' r='5' fill='%23f6b94a'/%3E%3Ccircle cx='47' cy='47' r='5' fill='%23f6b94a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Logistics Control Tower home">
+      <span class="brand-mark">LC</span><span>Logistics Control Tower</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#findings">Findings</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#method">Method</a>
+    </nav>
+    <a class="button compact" href="https://logistics-control-tow.streamlit.app/" target="_blank" rel="noreferrer">Open live dashboard ↗</a>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <p class="eyebrow">SUPPLY CHAIN ANALYTICS · PORTFOLIO CASE STUDY</p>
+      <div class="hero-grid">
+        <div>
+          <h1>Where is service breaking across the logistics network?</h1>
+          <p class="lede">A shipment-grain control tower connecting transportation, warehouse, finance, claims, CRM, and customer feedback data to expose service risk and prioritize action.</p>
+          <div class="answer"><span>Executive answer</span> Late delivery and incomplete fulfillment are the clearest service gaps; a small set of carrier and lane segments concentrates the most actionable risk.</div>
+          <div class="actions">
+            <a class="button" href="https://logistics-control-tow.streamlit.app/" target="_blank" rel="noreferrer">Explore interactive dashboard</a>
+            <a class="text-link" href="https://github.com/Akshith597/logistics-control-tower/releases/latest/download/Logistics_Control_Tower.pbix">Download Power BI file ↓</a>
+          </div>
+        </div>
+        <aside class="hero-panel" aria-label="Project scope">
+          <div><span>12</span><small>source tables</small></div>
+          <div><span>921K</span><small>source rows</small></div>
+          <div><span>98,595</span><small>modeled shipments</small></div>
+          <div><span>6</span><small>business dimensions</small></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="kpi-band" aria-label="Executive KPIs">
+      <div class="shell kpi-grid">
+        <article><p>ON-TIME DELIVERY</p><strong>76.5%</strong><span>59,986 of 78,452 eligible</span></article>
+        <article><p>OTIF</p><strong>62.4%</strong><span>46,321 of 74,198 eligible</span></article>
+        <article><p>FULL-FILL</p><strong>81.4%</strong><span>10,434 on-time but underfilled</span></article>
+        <article><p>REVENUE</p><strong>$72.3M</strong><span>$48.3M gross margin</span></article>
+        <article><p>CUSTOMER SIGNAL</p><strong>−18.8</strong><span>NPS · 3.4% survey coverage</span></article>
+      </div>
+    </section>
+
+    <section class="section shell" id="findings">
+      <div class="section-heading">
+        <p class="eyebrow">DECISION BRIEF</p>
+        <h2>Five findings that focus the operating conversation</h2>
+        <p>Rates are paired with eligible denominators and volume guardrails, so the ranking does not confuse missing data or tiny segments with operational priority.</p>
+      </div>
+      <div class="finding-grid">
+        <article class="finding"><span>01 · SERVICE</span><strong>23.5% miss on OTD</strong><p>Nearly one in four eligible shipments is late. OTIF falls further to 62.4% when fulfillment is included.</p></article>
+        <article class="finding"><span>02 · CUSTOMER IMPACT</span><strong>2.4× complaint rate</strong><p>Late shipments carry a 6.0% complaint rate versus 2.5% for on-time shipments.</p></article>
+        <article class="finding"><span>03 · CARRIER</span><strong>StoneBridge at 72.7%</strong><p>The lowest high-volume carrier OTD rate includes 957 late shipments across 3,511 eligible moves.</p></article>
+        <article class="finding"><span>04 · LANE</span><strong>New Jersey → SLC at 55.6%</strong><p>The weakest volume-qualified lane delivered only 229 of 412 OTIF-eligible shipments in full and on time.</p></article>
+        <article class="finding"><span>05 · DATA QUALITY</span><strong>4,531 timestamps missing</strong><p>Delivered rows without an actual delivery date are the largest immediate OTD coverage issue.</p></article>
+      </div>
+    </section>
+
+    <section class="section dashboard-section" id="dashboard">
+      <div class="shell">
+        <div class="section-heading split">
+          <div><p class="eyebrow">DASHBOARD WALKTHROUGH</p><h2>From executive pulse to exception queue</h2></div>
+          <div class="tabs" role="tablist" aria-label="Dashboard view">
+            <button role="tab" aria-selected="true" data-view="executive">Executive</button>
+            <button role="tab" aria-selected="false" data-view="carrier">Carrier & lane</button>
+            <button role="tab" aria-selected="false" data-view="model">Data model</button>
+          </div>
+        </div>
+        <figure class="dashboard-frame">
+          <img id="dashboardImage" src="assets/executive-overview.png" alt="Power BI executive overview dashboard">
+          <figcaption id="dashboardCaption">Executive Overview — network service, revenue, margin, and exception signals in one decision surface.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section shell recommendations">
+      <div class="section-heading"><p class="eyebrow">ACTION PLAN</p><h2>Recommended 30 / 60 / 90-day sequence</h2></div>
+      <div class="timeline">
+        <article><span>30 DAYS</span><h3>Restore metric coverage</h3><p>Assign owners to missing delivery timestamps, OTD/OTIF completeness, and full-fill exceptions. Publish eligible counts beside every service rate.</p></article>
+        <article><span>60 DAYS</span><h3>Concentrate reviews</h3><p>Review high-volume carrier and lane combinations using rate, failure count, cost, claims, and complaints together.</p></article>
+        <article><span>90 DAYS</span><h3>Pilot network changes</h3><p>Test targeted routing-guide, service-level, or fulfillment changes and evaluate pre/post service and cost before scaling.</p></article>
+      </div>
+    </section>
+
+    <section class="section method" id="method">
+      <div class="shell method-grid">
+        <div><p class="eyebrow">METHOD & GOVERNANCE</p><h2>Built for traceability, not just presentation</h2><p>Python creates deterministic source data and quality profiles. DuckDB SQL reconciles operational systems into a governed shipment-grain star schema. Reusable KPI views feed both Power BI and browser-ready exports.</p></div>
+        <ol>
+          <li><span>01</span><div><strong>Ingest and profile</strong><p>Transportation, warehouse, invoice, claims, CRM, and survey sources.</p></div></li>
+          <li><span>02</span><div><strong>Reconcile at shipment grain</strong><p>Aggregate one-to-many facts before joining to prevent fan-out.</p></div></li>
+          <li><span>03</span><div><strong>Validate every layer</strong><p>Executable quality gates test keys, relationships, reconciliation, and KPI logic.</p></div></li>
+          <li><span>04</span><div><strong>Publish decision surfaces</strong><p>Power BI semantic model, Streamlit companion, and documented recommendations.</p></div></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-grid">
+      <div><strong>Logistics Control Tower</strong><p>Synthetic portfolio dataset. No real customers, shipments, or company results.</p></div>
+      <div class="footer-links">
+        <a href="https://logistics-control-tow.streamlit.app/">Live dashboard</a>
+        <a href="https://github.com/Akshith597/logistics-control-tower">Source</a>
+        <a href="https://github.com/Akshith597/logistics-control-tower/releases/latest/download/logistics_dashboard_data.zip">Data bundle</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -4,10 +4,12 @@
 
 ## Portfolio artifacts
 
+- [View the recruiter-facing GitHub Pages case study](https://akshith597.github.io/logistics-control-tower/)
+- [Explore the interactive Streamlit dashboard](https://logistics-control-tow.streamlit.app/)
 - [Download the reviewed Power BI dashboard](https://github.com/Akshith597/logistics-control-tower/releases/latest/download/Logistics_Control_Tower.pbix)
 - [Download the dashboard-ready dataset](https://github.com/Akshith597/logistics-control-tower/releases/latest/download/logistics_dashboard_data.zip)
 - [Preview the recruiter-facing dashboard PDF](images/Logistics_Control_Tower.pdf)
-- **Browser dashboard:** run `streamlit run streamlit_app.py` locally, or deploy this repository through [Streamlit Community Cloud](https://streamlit.io/cloud).
+- **Browser dashboard:** run `streamlit run streamlit_app.py` locally, or use the deployed Streamlit dashboard linked above.
 
 > The project uses synthetic logistics data created for portfolio demonstration. GitHub hosts the downloadable Power BI file and data; opening the interactive `.pbix` requires Power BI Desktop.
 

@@ -1,9 +1,10 @@
 # Generated reports
 
 Generated CSVs and business findings are local outputs, not tracked portfolio
-results. The legacy full-size benchmark used optimistic financial assumptions
-and has been removed from the current Git tree. Existing local copies and Git
-history are retained; no benchmark values were manually edited.
+results. The full-size benchmark uses optimistic financial assumptions;
+its generated outputs remain outside the current Git tree. Reviewers can now
+download its synthetic source workbook alongside the PBIX and rebuild the
+findings using [the reproduction guide](../documentation/REPRODUCING.md).
 
 Reviewers can generate the demo reports by running the complete pipeline:
 
@@ -21,4 +22,4 @@ reproduction of the full-size benchmark numbers.
 Inspect `reports/demo/executive_summary.csv` and `reports/demo/business_insights.md`
 after the run. The live app reads the tracked `data/public_dashboard/` snapshot;
 the README scorecard describes that demo. The older downloadable PBIX is separate
-historical evidence, not a reconciliation target for the live app.
+benchmark evidence, not a reconciliation target for the live app.

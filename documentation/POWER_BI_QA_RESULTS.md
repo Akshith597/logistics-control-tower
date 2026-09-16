@@ -67,7 +67,7 @@ keyboard/tab order are added to the remaining visuals.
 ## Open finding: capture filter state
 
 `images/Executive_Overview.png` shows Full-Fill Rate 81.3% and Gross Margin %
-66.7%, while the tracked benchmark in `reports/executive_summary.csv` holds
+66.7%, while the legacy, now local-only benchmark executive summary holds
 0.813661 and 0.667930, which round to 81.4% and 66.8%. The same capture shows
 the `Shipment Date` slicer ending before the reported last shipment date of
 December 15, 2025, and its trend charts stop at 2025-11, so the cards were
@@ -78,8 +78,9 @@ gap is easy to miss.
 The pipeline numbers are correct and unchanged; only the exported images carry
 the narrowed context. The fix is to re-export the PNGs and the PDF under the
 capture protocol now recorded in `powerbi/REPORT_BLUEPRINT.md`, which requires
-Power BI Desktop. Until that re-export happens, the README states that
-`reports/executive_summary.csv` is the authoritative reconciliation target.
+Power BI Desktop. This finding concerns the historical PBIX captures, not the
+live demo. Legacy benchmark reports are no longer tracked in the main tree;
+the README's current scorecard describes the separate public demo fixture.
 
 Status: **open**, tracked, and disclosed rather than silently reconciled.
 

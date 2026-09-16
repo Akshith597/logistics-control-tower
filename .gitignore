@@ -17,7 +17,9 @@ data/powerbi/*.parquet
 database/*.duckdb
 database/*.wal
 
-# Demo-only report outputs. The root reports/ files are the tracked benchmark.
+# Generated report outputs stay local.
+reports/*.csv
+reports/business_insights.md
 reports/demo/
 
 # Credentials and local configuration

@@ -64,7 +64,8 @@ Rules that keep the strip readable:
 ## Screenshot and PDF capture protocol
 
 The captures in `images/` are the numbers most reviewers actually read, so they
-must agree with the tracked benchmark in `reports/executive_summary.csv`. Card
+must agree with a freshly generated reconciliation target for the same dataset.
+Legacy benchmark CSVs are local-only and are no longer tracked. Card
 values are evaluated in the filter context saved with the report, and a slicer
 left narrower than the data range silently shifts them.
 
@@ -76,9 +77,9 @@ Before exporting any PNG or PDF:
 2. **Confirm the unfiltered anchor.** `Total Shipments` must read 98,595. If the
    card shows a lower number, a filter is still active and the export is invalid.
 3. **Reconcile before publishing.** Check the exported Full-Fill Rate and Gross
-   Margin % against `reports/executive_summary.csv` (81.4% and 66.8% on the
-   benchmark build). A mismatch means step 1 was incomplete — fix the filter
-   state and re-export rather than annotating the difference.
+   Margin % against the generated executive summary for that build. Do not use
+   the legacy benchmark to reconcile the live demo. Investigate any mismatch,
+   including the filter context, before re-exporting.
 4. **Re-export every page in one pass** so all captures share one filter state.
 
 ## Page 2 — Carrier & Lane Performance

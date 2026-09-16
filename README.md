@@ -33,9 +33,9 @@ downloadable PBIX is the larger benchmark report and is intentionally separate.
 | Average CSAT | 2.95 / 5 | 952 synthetic survey responses |
 | Net promoter score | -43.2 | Directional synthetic-fixture result |
 
-The larger benchmark model's generated findings remain available in
-[business findings](reports/business_insights.md); do not compare those benchmark
-figures directly with the interactive demo scorecard above.
+The older full-size benchmark outputs are no longer tracked in the main tree.
+The downloadable PBIX and older screenshots remain historical evidence; their
+financial assumptions are not the live demo's 20.0% margin scenario.
 
 ## Run it in one command
 
@@ -47,7 +47,7 @@ python python/run_pipeline.py --generate-demo-data
 
 This generates an isolated deterministic workbook, rebuilds the warehouse and
 Parquet exports, runs validation, and writes demo reports without overwriting the
-tracked benchmark reports. Then launch the browser dashboard:
+local benchmark reports. Then launch the browser dashboard:
 
 ```bash
 streamlit run streamlit_app.py
@@ -78,7 +78,7 @@ aggregated before joining to prevent fan-out and double counting.
 | Tests and quality gates | [`tests/`](tests/) and [`sql/07_validate_model.sql`](sql/07_validate_model.sql) |
 | Power BI semantic model | [`powerbi/MODEL_SPEC.md`](powerbi/MODEL_SPEC.md) |
 | Dashboard build guide | [`powerbi/BUILD_GUIDE.md`](powerbi/BUILD_GUIDE.md) |
-| KPI reconciliation | [`reports/executive_summary.csv`](reports/executive_summary.csv) |
+| KPI reconciliation | [Report generation and provenance](reports/README.md) |
 | Production roadmap | [`documentation/PRODUCTION_ROADMAP.md`](documentation/PRODUCTION_ROADMAP.md) |
 
 ## Design and governance
